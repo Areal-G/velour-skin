@@ -5,7 +5,7 @@ import { absoluteUrl } from "@/app/lib/seo";
 /**
  * /sitemap.xml — static and category pages.
  * Product URLs live in chunked sitemaps (see `products/sitemap.ts`) so the
- * 50,000+ product catalogue stays within search-engine limits per file.
+ * 50,000+ product catalog stays within search-engine limits per file.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const categories = await getCategories();

@@ -4,10 +4,10 @@ export function cn(...classes: Array<string | false | null | undefined>): string
 }
 
 export function pluralize(count: number, singular: string, plural = `${singular}s`): string {
-  return `${count.toLocaleString("en-NG")} ${count === 1 ? singular : plural}`;
+  return `${count.toLocaleString("en-US")} ${count === 1 ? singular : plural}`;
 }
 
-const dateFormatter = new Intl.DateTimeFormat("en-NG", {
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
   month: "long",
   year: "numeric",

@@ -35,7 +35,7 @@ export async function createClient() {
 
 /**
  * Cookie-less client with the public key, for anonymous reads of public data
- * (the product catalogue). Safe to use inside `"use cache"` scopes because it
+ * (the product catalog). Safe to use inside `"use cache"` scopes because it
  * never touches request data.
  */
 export function createPublicClient() {

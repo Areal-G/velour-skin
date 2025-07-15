@@ -11,8 +11,8 @@ export interface SitemapProduct {
 }
 
 /**
- * Storage-agnostic catalogue contract. The storefront depends only on this
- * interface, so swapping the in-memory demo catalogue for Supabase (or any
+ * Storage-agnostic catalog contract. The storefront depends only on this
+ * interface, so swapping the in-memory demo catalog for Supabase (or any
  * other backend) requires no UI changes.
  */
 export interface CatalogRepository {
@@ -48,7 +48,7 @@ export function toSummary(p: Product): ProductSummary {
 
 /**
  * Popularity score used for the default "featured" ordering. Shared by the
- * demo catalogue and the Supabase seeder so both orderings match.
+ * demo catalog and the Supabase seeder so both orderings match.
  */
 export function popularityScore(p: Pick<Product, "rating" | "reviewCount">, isCurated: boolean) {
   const base = p.rating * Math.log10(p.reviewCount + 10);

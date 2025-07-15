@@ -13,8 +13,7 @@ export default function PrivacyPage() {
     <PolicyPage title="Privacy policy" path="/policies/privacy" updated="15 October 2026">
       <p>
         Velour Skin respects your privacy. This policy explains what personal data we collect when you use
-        this website, why we collect it, and the choices you have. This store is a portfolio demonstration;
-        the practices below describe how the application is built to handle data.
+        this website, why we collect it, and the choices you have.
       </p>
       <h2>What we collect</h2>
       <ul>
@@ -24,7 +23,7 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Order data</strong> — items purchased, delivery address and contact details needed to
-          fulfil your order.
+          fulfill your order.
         </li>
         <li>
           <strong>Payment data</strong> — processed entirely by our PCI-DSS Level 1 certified payment
@@ -41,7 +40,7 @@ export default function PrivacyPage() {
       </p>
       <h2>Your rights</h2>
       <p>
-        Under the Nigeria Data Protection Act 2023 you may request access to, correction of, or deletion of
+        Depending on where you live (for example, under the California Consumer Privacy Act), you may request access to, correction of, or deletion of
         your personal data at any time, and you may unsubscribe from marketing emails using the link in every
         message.
       </p>

@@ -7,7 +7,7 @@ import type { Product, ProductSummary } from "@/app/types/product";
 export const SITE_NAME = "Velour Skin";
 export const SITE_TAGLINE = "Considered skincare, crafted in small batches";
 export const SITE_DESCRIPTION =
-  "Velour Skin is a luxury skincare house creating clinically considered serums, creams and rituals for radiant, resilient skin. Free nationwide delivery across Nigeria on orders over ₦100,000.";
+  "Velour Skin is a luxury skincare house creating clinically considered serums, creams and rituals for radiant, resilient skin. Free delivery across the US on orders over $100.";
 
 export function absoluteUrl(path = "/"): string {
   return new URL(path, `${getSiteUrl()}/`).toString();
@@ -42,7 +42,7 @@ export function buildMetadata({
       url,
       siteName: SITE_NAME,
       type,
-      locale: "en_NG",
+      locale: "en_US",
       ...(image ? { images: [{ url: absoluteUrl(image), alt: title }] } : {}),
     },
     twitter: { card: "summary_large_image", title, description },
@@ -56,7 +56,7 @@ export function buildMetadata({
 
 type JsonLd = Record<string, unknown>;
 
-/** Serialises JSON-LD safely for an inline `<script>` (escapes `<`). */
+/** Serializes JSON-LD safely for an inline `<script>` (escapes `<`). */
 export function serializeJsonLd(data: JsonLd | JsonLd[]): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }

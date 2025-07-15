@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  // Don't let `next dev` recreate AGENTS.md.
+  agentRules: false,
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 90],

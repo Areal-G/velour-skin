@@ -1,8 +1,8 @@
 /**
- * Demo catalogue.
+ * Demo catalog.
  *
  * A small set of hand-written hero products is extended with a deterministic
- * generator so the storefront can be exercised against a realistic catalogue
+ * generator so the storefront can be exercised against a realistic catalog
  * of 50,000 products without shipping a 50k-row JSON file. The same generator
  * seeds Supabase (see `scripts/seed-supabase.ts`), so local and database modes
  * serve identical data.
@@ -10,7 +10,7 @@
  * Every value is derived from a seeded PRNG — no `Math.random()` or
  * `Date.now()` — so output is stable across builds, servers and tests.
  */
-import { PRODUCT_IMAGES, TEXTURE_IMAGES, imageFor } from "@/app/data/images";
+import { MODEL_IMAGES, PRODUCT_IMAGES, TEXTURE_IMAGES, imageFor } from "@/app/data/images";
 import type {
   Product,
   ProductBadge,
@@ -27,50 +27,50 @@ type VesselForm = "dropper" | "jar" | "tube" | "pump" | "mist";
 interface CategoryBlueprint {
   forms: VesselForm[];
   types: string[];
-  /** Typical price of the smallest size, in whole Naira. */
-  basePriceNaira: number;
+  /** Typical price of the smallest size, in whole US dollars. */
+  basePriceUsd: number;
 }
 
 const BLUEPRINTS: Record<string, CategoryBlueprint> = {
   cleansers: {
     forms: ["tube", "pump"],
     types: ["Cleansing Balm", "Gel Cleanser", "Cream Cleanser", "Cleansing Oil", "Milk Cleanser"],
-    basePriceNaira: 24_000,
+    basePriceUsd: 24,
   },
   toners: {
     forms: ["mist"],
     types: ["Essence", "Toner", "Facial Mist", "Exfoliating Tonic"],
-    basePriceNaira: 26_000,
+    basePriceUsd: 26,
   },
   serums: {
     forms: ["dropper"],
     types: ["Serum", "Concentrate", "Ampoule", "Booster Drops"],
-    basePriceNaira: 48_000,
+    basePriceUsd: 48,
   },
-  moisturisers: {
+  moisturizers: {
     forms: ["jar", "pump"],
     types: ["Cream", "Gel Cream", "Night Cream", "Emulsion", "Barrier Balm"],
-    basePriceNaira: 42_000,
+    basePriceUsd: 42,
   },
   masks: {
     forms: ["jar", "tube"],
     types: ["Overnight Mask", "Clay Mask", "Sleeping Mask", "Enzyme Mask"],
-    basePriceNaira: 34_000,
+    basePriceUsd: 34,
   },
   "eye-care": {
     forms: ["tube", "dropper"],
     types: ["Eye Cream", "Eye Serum", "Eye Balm"],
-    basePriceNaira: 38_000,
+    basePriceUsd: 38,
   },
   body: {
     forms: ["pump"],
     types: ["Body Lotion", "Body Oil", "Body Wash", "Hand Cream"],
-    basePriceNaira: 28_000,
+    basePriceUsd: 28,
   },
   suncare: {
     forms: ["tube", "mist"],
     types: ["Daily Fluid SPF 50", "Mineral Shield SPF 30", "Tinted Veil SPF 40"],
-    basePriceNaira: 30_000,
+    basePriceUsd: 30,
   },
 };
 
@@ -98,14 +98,14 @@ interface HeroIngredient {
 }
 
 const HEROES: HeroIngredient[] = [
-  { name: "Peptide", inci: "Palmitoyl Tripeptide-1", concerns: ["firmness", "anti-ageing"], skinTypes: ["dry", "normal", "combination"], benefit: "visibly firms and smooths" },
+  { name: "Peptide", inci: "Palmitoyl Tripeptide-1", concerns: ["firmness", "anti-aging"], skinTypes: ["dry", "normal", "combination"], benefit: "visibly firms and smooths" },
   { name: "Ceramide", inci: "Ceramide NP", concerns: ["hydration", "redness"], skinTypes: ["dry", "sensitive", "normal"], benefit: "reinforces the moisture barrier" },
   { name: "Niacinamide", inci: "Niacinamide", concerns: ["pores", "blemishes"], skinTypes: ["oily", "combination", "normal"], benefit: "refines pores and evens tone" },
-  { name: "Vitamin C", inci: "3-O-Ethyl Ascorbic Acid", concerns: ["brightening", "anti-ageing"], skinTypes: ["normal", "combination", "dry"], benefit: "restores radiance" },
-  { name: "Retinal", inci: "Retinal", concerns: ["anti-ageing", "firmness"], skinTypes: ["normal", "oily", "combination"], benefit: "softens the look of fine lines" },
+  { name: "Vitamin C", inci: "3-O-Ethyl Ascorbic Acid", concerns: ["brightening", "anti-aging"], skinTypes: ["normal", "combination", "dry"], benefit: "restores radiance" },
+  { name: "Retinal", inci: "Retinal", concerns: ["anti-aging", "firmness"], skinTypes: ["normal", "oily", "combination"], benefit: "softens the look of fine lines" },
   { name: "Hyaluronic", inci: "Sodium Hyaluronate", concerns: ["hydration"], skinTypes: ["dry", "normal", "sensitive", "combination", "oily"], benefit: "draws in lasting hydration" },
   { name: "Squalane", inci: "Squalane", concerns: ["hydration"], skinTypes: ["dry", "sensitive", "normal"], benefit: "replenishes lipids for a supple feel" },
-  { name: "Bakuchiol", inci: "Bakuchiol", concerns: ["anti-ageing", "firmness"], skinTypes: ["sensitive", "dry", "normal"], benefit: "renews gently, without irritation" },
+  { name: "Bakuchiol", inci: "Bakuchiol", concerns: ["anti-aging", "firmness"], skinTypes: ["sensitive", "dry", "normal"], benefit: "renews gently, without irritation" },
   { name: "Centella", inci: "Centella Asiatica Extract", concerns: ["redness", "blemishes"], skinTypes: ["sensitive", "combination", "oily"], benefit: "calms and comforts reactive skin" },
   { name: "Azelaic", inci: "Azelaic Acid", concerns: ["redness", "blemishes"], skinTypes: ["oily", "combination", "sensitive"], benefit: "clarifies and reduces redness" },
   { name: "Rice Ferment", inci: "Saccharomyces/Rice Ferment Filtrate", concerns: ["brightening", "hydration"], skinTypes: ["normal", "dry", "combination"], benefit: "leaves a translucent glow" },
@@ -115,7 +115,7 @@ const HEROES: HeroIngredient[] = [
   { name: "Oat", inci: "Avena Sativa Kernel Extract", concerns: ["redness", "hydration"], skinTypes: ["sensitive", "dry"], benefit: "soothes tightness and itch" },
   { name: "Glycolic", inci: "Glycolic Acid", concerns: ["brightening", "pores"], skinTypes: ["normal", "oily", "combination"], benefit: "resurfaces for smoother texture" },
   { name: "Tremella", inci: "Tremella Fuciformis Extract", concerns: ["hydration"], skinTypes: ["dry", "sensitive", "normal"], benefit: "delivers weightless moisture" },
-  { name: "Copper Peptide", inci: "Copper Tripeptide-1", concerns: ["firmness", "anti-ageing"], skinTypes: ["normal", "dry", "combination"], benefit: "supports skin renewal" },
+  { name: "Copper Peptide", inci: "Copper Tripeptide-1", concerns: ["firmness", "anti-aging"], skinTypes: ["normal", "dry", "combination"], benefit: "supports skin renewal" },
   { name: "Marula", inci: "Sclerocarya Birrea Seed Oil", concerns: ["hydration", "firmness"], skinTypes: ["dry", "normal"], benefit: "melts in for a velvety finish" },
   { name: "Lactic", inci: "Lactic Acid", concerns: ["brightening", "hydration"], skinTypes: ["dry", "normal", "sensitive"], benefit: "polishes while it hydrates" },
 ];
@@ -167,13 +167,15 @@ function productImages(categorySlug: string, index: number) {
   // index would give every product in a category the same photograph.
   const hash = Math.imul(index ^ 0x9e3779b9, 2654435761) >>> 0;
   const main = imageFor(pool, hash);
-  const alternate = imageFor(pool, hash + 1);
+  // The hover / second image is a model portrait, never the same photo as the main one.
+  let alternate = imageFor(MODEL_IMAGES, hash >>> 5);
+  if (alternate === main) alternate = imageFor(MODEL_IMAGES, (hash >>> 5) + 1);
   return { image: main, images: [main, alternate, imageFor(TEXTURE_IMAGES, hash >>> 3)] };
 }
 
-/** Rounds kobo to the nearest ₦500 — the price points used across the store. */
-const roundToNaira = (kobo: number) => Math.max(50_000, Math.round(kobo / 50_000) * 50_000);
-const nairaToKobo = (naira: number) => naira * 100;
+/** Rounds cents to the nearest whole dollar — the price points used across the store. */
+const roundToDollar = (cents: number) => Math.max(500, Math.round(cents / 100) * 100);
+const usdToCents = (usd: number) => usd * 100;
 
 function buildVariants(
   productId: string,
@@ -186,7 +188,7 @@ function buildVariants(
     id: `${productId}-${sizeMl}ml`,
     label: `${sizeMl} ml`,
     sizeMl,
-    priceCents: roundToNaira(basePriceCents * multipliers[i]),
+    priceCents: roundToDollar(basePriceCents * multipliers[i]),
   }));
 }
 
@@ -195,7 +197,7 @@ const CATALOG_SPAN_DAYS = 1000;
 const DAY_MS = 86_400_000;
 
 // ---------------------------------------------------------------------------
-// Hand-written hero products (always the first entries in the catalogue).
+// Hand-written hero products (always the first entries in the catalog).
 // ---------------------------------------------------------------------------
 
 interface CuratedSeed {
@@ -203,9 +205,9 @@ interface CuratedSeed {
   name: string;
   category: string;
   form: VesselForm;
-  /** Price of the smallest size, in whole Naira. */
-  priceNaira: number;
-  compareAtNaira?: number;
+  /** Price of the smallest size, in whole US dollars. */
+  priceUsd: number;
+  compareAtUsd?: number;
   rating: number;
   reviewCount: number;
   badge?: ProductBadge;
@@ -219,29 +221,29 @@ interface CuratedSeed {
 
 const CURATED: CuratedSeed[] = [
   {
-    slug: "aura-renewal-serum",
-    name: "Aura Renewal Serum",
+    slug: "velour-renewal-serum",
+    name: "Velour Renewal Serum",
     category: "serums",
     form: "dropper",
-    priceNaira: 68_000,
+    priceUsd: 68,
     rating: 4.9,
     reviewCount: 2814,
     badge: "Bestseller",
     skinTypes: ["normal", "dry", "combination"],
-    concerns: ["anti-ageing", "firmness", "brightening"],
+    concerns: ["anti-aging", "firmness", "brightening"],
     description:
       "Our signature serum pairs encapsulated retinal with a peptide complex and fermented rose to visibly refine texture and restore a lit-from-within radiance — without the irritation associated with traditional retinoids.",
     howToUse:
-      "Each evening, warm 3–4 drops between fingertips and press into clean skin. Follow with moisturiser. Introduce every other night for the first two weeks.",
+      "Each evening, warm 3–4 drops between fingertips and press into clean skin. Follow with moisturizer. Introduce every other night for the first two weeks.",
     keyIngredients: ["Retinal", "Palmitoyl Tripeptide-1", "Rosa Damascena Ferment", "Squalane"],
     daysAgo: 420,
   },
   {
     slug: "cashmere-cloud-cream",
     name: "Cashmere Cloud Cream",
-    category: "moisturisers",
+    category: "moisturizers",
     form: "jar",
-    priceNaira: 58_000,
+    priceUsd: 58,
     rating: 4.8,
     reviewCount: 1932,
     badge: "Bestseller",
@@ -258,7 +260,7 @@ const CURATED: CuratedSeed[] = [
     name: "Rose Velvet Cleansing Balm",
     category: "cleansers",
     form: "tube",
-    priceNaira: 36_000,
+    priceUsd: 36,
     rating: 4.8,
     reviewCount: 1645,
     badge: "Bestseller",
@@ -276,27 +278,27 @@ const CURATED: CuratedSeed[] = [
     name: "Luminous Vitamin C Concentrate",
     category: "serums",
     form: "dropper",
-    priceNaira: 54_000,
+    priceUsd: 54,
     rating: 4.7,
     reviewCount: 1210,
     skinTypes: ["normal", "combination", "oily"],
-    concerns: ["brightening", "anti-ageing"],
+    concerns: ["brightening", "anti-aging"],
     description:
       "A stable 15% vitamin C derivative with ferulic acid and vitamin E to fade the look of dark spots and defend against daily environmental stress.",
-    howToUse: "Each morning, apply 3 drops to clean skin before moisturiser and SPF.",
+    howToUse: "Each morning, apply 3 drops to clean skin before moisturizer and SPF.",
     keyIngredients: ["3-O-Ethyl Ascorbic Acid", "Ferulic Acid", "Tocopherol"],
     daysAgo: 300,
   },
   {
     slug: "midnight-ceramide-night-cream",
     name: "Midnight Ceramide Night Cream",
-    category: "moisturisers",
+    category: "moisturizers",
     form: "jar",
-    priceNaira: 62_000,
+    priceUsd: 62,
     rating: 4.8,
     reviewCount: 988,
     skinTypes: ["dry", "normal", "sensitive"],
-    concerns: ["hydration", "firmness", "anti-ageing"],
+    concerns: ["hydration", "firmness", "anti-aging"],
     description:
       "A rich, restorative night cream that works with skin's overnight repair cycle, combining ceramides, bakuchiol and marula oil for a rested, plumped morning complexion.",
     howToUse: "In the evening, warm a small amount between palms and press over face and neck.",
@@ -308,7 +310,7 @@ const CURATED: CuratedSeed[] = [
     name: "Petal Dew Essence",
     category: "toners",
     form: "mist",
-    priceNaira: 38_000,
+    priceUsd: 38,
     rating: 4.7,
     reviewCount: 842,
     skinTypes: ["dry", "normal", "sensitive", "combination"],
@@ -324,7 +326,7 @@ const CURATED: CuratedSeed[] = [
     name: "Porcelain Niacinamide Serum",
     category: "serums",
     form: "dropper",
-    priceNaira: 42_000,
+    priceUsd: 42,
     rating: 4.6,
     reviewCount: 1504,
     skinTypes: ["oily", "combination", "normal"],
@@ -340,12 +342,12 @@ const CURATED: CuratedSeed[] = [
     name: "Silk Mineral Shield SPF 50",
     category: "suncare",
     form: "tube",
-    priceNaira: 38_000,
+    priceUsd: 38,
     rating: 4.6,
     reviewCount: 733,
     badge: "New",
     skinTypes: ["sensitive", "normal", "dry", "combination", "oily"],
-    concerns: ["redness", "anti-ageing"],
+    concerns: ["redness", "anti-aging"],
     description:
       "A sheer mineral sunscreen with a soft-matte, no-white-cast finish and broad-spectrum UVA/UVB protection for every skin tone.",
     howToUse:
@@ -358,11 +360,11 @@ const CURATED: CuratedSeed[] = [
     name: "Opal Eye Revival Cream",
     category: "eye-care",
     form: "tube",
-    priceNaira: 48_000,
+    priceUsd: 48,
     rating: 4.7,
     reviewCount: 611,
     skinTypes: ["dry", "normal", "sensitive"],
-    concerns: ["firmness", "anti-ageing", "hydration"],
+    concerns: ["firmness", "anti-aging", "hydration"],
     description:
       "A cooling eye cream with caffeine, copper peptides and light-reflecting pearl to depuff, smooth and brighten the delicate eye contour.",
     howToUse: "Tap a rice-grain amount along the orbital bone, morning and evening.",
@@ -374,7 +376,7 @@ const CURATED: CuratedSeed[] = [
     name: "Amber Overnight Renewal Mask",
     category: "masks",
     form: "jar",
-    priceNaira: 46_000,
+    priceUsd: 46,
     rating: 4.7,
     reviewCount: 527,
     skinTypes: ["normal", "dry", "combination"],
@@ -390,7 +392,7 @@ const CURATED: CuratedSeed[] = [
     name: "Botanic Clarifying Clay Mask",
     category: "masks",
     form: "jar",
-    priceNaira: 36_000,
+    priceUsd: 36,
     rating: 4.5,
     reviewCount: 402,
     skinTypes: ["oily", "combination"],
@@ -406,7 +408,7 @@ const CURATED: CuratedSeed[] = [
     name: "Neroli Dry Body Oil",
     category: "body",
     form: "pump",
-    priceNaira: 44_000,
+    priceUsd: 44,
     rating: 4.8,
     reviewCount: 689,
     skinTypes: ["dry", "normal", "sensitive"],
@@ -422,7 +424,7 @@ const CURATED: CuratedSeed[] = [
     name: "Cloud Gel Cleanser",
     category: "cleansers",
     form: "pump",
-    priceNaira: 28_000,
+    priceUsd: 28,
     rating: 4.6,
     reviewCount: 1120,
     skinTypes: ["oily", "combination", "normal"],
@@ -436,9 +438,9 @@ const CURATED: CuratedSeed[] = [
   {
     slug: "camellia-barrier-balm",
     name: "Camellia Barrier Balm",
-    category: "moisturisers",
+    category: "moisturizers",
     form: "jar",
-    priceNaira: 52_000,
+    priceUsd: 52,
     rating: 4.7,
     reviewCount: 455,
     badge: "New",
@@ -455,7 +457,7 @@ const CURATED: CuratedSeed[] = [
     name: "Solstice Glow Drops",
     category: "serums",
     form: "dropper",
-    priceNaira: 46_000,
+    priceUsd: 46,
     rating: 4.6,
     reviewCount: 388,
     badge: "Limited",
@@ -463,7 +465,7 @@ const CURATED: CuratedSeed[] = [
     concerns: ["brightening", "hydration"],
     description:
       "Liquid light: a sheer, tinted serum infused with rosehip and vitamin C for a sun-kissed glow without the sun.",
-    howToUse: "Mix 1–2 drops into moisturiser or press onto high points of the face.",
+    howToUse: "Mix 1–2 drops into moisturizer or press onto high points of the face.",
     keyIngredients: ["Rosa Canina Fruit Oil", "3-O-Ethyl Ascorbic Acid", "Mica"],
     daysAgo: 60,
   },
@@ -472,7 +474,7 @@ const CURATED: CuratedSeed[] = [
     name: "Iris Exfoliating Tonic",
     category: "toners",
     form: "mist",
-    priceNaira: 34_000,
+    priceUsd: 34,
     rating: 4.6,
     reviewCount: 710,
     skinTypes: ["normal", "oily", "combination"],
@@ -488,7 +490,7 @@ const CURATED: CuratedSeed[] = [
     name: "Velvet Hand Cream",
     category: "body",
     form: "tube",
-    priceNaira: 22_000,
+    priceUsd: 22,
     rating: 4.7,
     reviewCount: 940,
     skinTypes: ["dry", "normal", "sensitive"],
@@ -504,14 +506,14 @@ const CURATED: CuratedSeed[] = [
     name: "Pearl Hyaluronic Serum",
     category: "serums",
     form: "dropper",
-    priceNaira: 44_000,
+    priceUsd: 44,
     rating: 4.8,
     reviewCount: 1388,
     skinTypes: ["dry", "normal", "sensitive", "combination", "oily"],
     concerns: ["hydration"],
     description:
       "Five weights of hyaluronic acid deliver multi-depth hydration for instantly plumper, dewier skin.",
-    howToUse: "Apply to damp skin morning and evening, then seal with moisturiser.",
+    howToUse: "Apply to damp skin morning and evening, then seal with moisturizer.",
     keyIngredients: ["Sodium Hyaluronate", "Hydrolyzed Hyaluronic Acid", "Panthenol"],
     daysAgo: 640,
   },
@@ -520,7 +522,7 @@ const CURATED: CuratedSeed[] = [
     name: "Aurora Tinted Veil SPF 40",
     category: "suncare",
     form: "tube",
-    priceNaira: 36_000,
+    priceUsd: 36,
     rating: 4.5,
     reviewCount: 318,
     skinTypes: ["normal", "dry", "combination"],
@@ -536,7 +538,7 @@ const CURATED: CuratedSeed[] = [
     name: "Dew Eye Serum",
     category: "eye-care",
     form: "dropper",
-    priceNaira: 42_000,
+    priceUsd: 42,
     rating: 4.5,
     reviewCount: 274,
     skinTypes: ["normal", "dry", "sensitive", "combination"],
@@ -552,8 +554,8 @@ const CURATED: CuratedSeed[] = [
     name: "Fig Milk Cleanser",
     category: "cleansers",
     form: "pump",
-    priceNaira: 30_000,
-    compareAtNaira: 36_000,
+    priceUsd: 30,
+    compareAtUsd: 36,
     rating: 4.5,
     reviewCount: 506,
     skinTypes: ["dry", "sensitive", "normal"],
@@ -569,7 +571,7 @@ const CURATED: CuratedSeed[] = [
     name: "Saffron Firming Body Lotion",
     category: "body",
     form: "pump",
-    priceNaira: 38_000,
+    priceUsd: 38,
     rating: 4.6,
     reviewCount: 299,
     skinTypes: ["dry", "normal"],
@@ -583,9 +585,9 @@ const CURATED: CuratedSeed[] = [
   {
     slug: "marine-hydra-gel-cream",
     name: "Marine Hydra Gel Cream",
-    category: "moisturisers",
+    category: "moisturizers",
     form: "pump",
-    priceNaira: 46_000,
+    priceUsd: 46,
     rating: 4.6,
     reviewCount: 615,
     skinTypes: ["oily", "combination", "normal"],
@@ -601,7 +603,7 @@ const CURATED: CuratedSeed[] = [
     name: "Orris Sleeping Mask",
     category: "masks",
     form: "jar",
-    priceNaira: 42_000,
+    priceUsd: 42,
     rating: 4.7,
     reviewCount: 361,
     badge: "New",
@@ -616,9 +618,9 @@ const CURATED: CuratedSeed[] = [
 ];
 
 function curatedToProduct(seed: CuratedSeed, index: number): Product {
-  const id = `ma-${String(index + 1).padStart(5, "0")}`;
+  const id = `vs-${String(index + 1).padStart(5, "0")}`;
   const variantCount = seed.category === "body" || seed.category === "eye-care" ? 2 : 3;
-  const variants = buildVariants(id, seed.form, nairaToKobo(seed.priceNaira), variantCount);
+  const variants = buildVariants(id, seed.form, usdToCents(seed.priceUsd), variantCount);
   const createdAt = new Date(
     CATALOG_EPOCH + (CATALOG_SPAN_DAYS - seed.daysAgo) * DAY_MS,
   ).toISOString();
@@ -628,7 +630,7 @@ function curatedToProduct(seed: CuratedSeed, index: number): Product {
     name: seed.name,
     categorySlug: seed.category,
     priceCents: variants[0].priceCents,
-    compareAtCents: seed.compareAtNaira ? nairaToKobo(seed.compareAtNaira) : null,
+    compareAtCents: seed.compareAtUsd ? usdToCents(seed.compareAtUsd) : null,
     rating: seed.rating,
     reviewCount: seed.reviewCount,
     ...productImages(seed.category, index),
@@ -645,14 +647,14 @@ function curatedToProduct(seed: CuratedSeed, index: number): Product {
 }
 
 // ---------------------------------------------------------------------------
-// Deterministic generator for the long tail of the catalogue.
+// Deterministic generator for the long tail of the catalog.
 // ---------------------------------------------------------------------------
 
 const CATEGORY_SLUGS = Object.keys(BLUEPRINTS);
 
 function generateProduct(index: number): Product {
   const rand = prng(index * 2654435761);
-  const id = `ma-${String(index + 1).padStart(5, "0")}`;
+  const id = `vs-${String(index + 1).padStart(5, "0")}`;
   const categorySlug = CATEGORY_SLUGS[index % CATEGORY_SLUGS.length];
   const blueprint = BLUEPRINTS[categorySlug];
 
@@ -662,7 +664,7 @@ function generateProduct(index: number): Product {
   const form = pick(rand, blueprint.forms);
   const name = `${descriptor} ${hero.name} ${type}`;
 
-  const basePrice = roundToNaira(nairaToKobo(blueprint.basePriceNaira) * (0.75 + rand() * 0.9));
+  const basePrice = roundToDollar(usdToCents(blueprint.basePriceUsd) * (0.75 + rand() * 0.9));
   const variants = buildVariants(id, form, basePrice, 1 + Math.floor(rand() * 3));
   const onSale = rand() < 0.08;
   const reviewCount = Math.floor(rand() ** 2.2 * 2400);
@@ -686,7 +688,7 @@ function generateProduct(index: number): Product {
     name,
     categorySlug,
     priceCents: variants[0].priceCents,
-    compareAtCents: onSale ? roundToNaira(variants[0].priceCents * 1.25) : null,
+    compareAtCents: onSale ? roundToDollar(variants[0].priceCents * 1.25) : null,
     rating: Math.min(5, rating),
     reviewCount,
     ...productImages(categorySlug, index),
@@ -702,19 +704,19 @@ function generateProduct(index: number): Product {
   };
 }
 
-let catalogue: Product[] | null = null;
+let catalog: Product[] | null = null;
 
-/** Returns the full demo catalogue. Built once per server instance (~50 ms). */
-export function getDemoCatalogue(): Product[] {
-  if (!catalogue) {
+/** Returns the full demo catalog. Built once per server instance (~50 ms). */
+export function getDemoCatalog(): Product[] {
+  if (!catalog) {
     const curated = CURATED.map(curatedToProduct);
     const generated = Array.from({ length: CATALOG_SIZE - curated.length }, (_, i) =>
       generateProduct(i + curated.length),
     );
-    catalogue = [...curated, ...generated];
+    catalog = [...curated, ...generated];
   }
-  return catalogue;
+  return catalog;
 }
 
-/** Number of hand-written hero products at the start of the catalogue. */
+/** Number of hand-written hero products at the start of the catalog. */
 export const CURATED_COUNT = CURATED.length;

@@ -49,7 +49,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
         ]}
       />
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+      {/* minmax(0, …) stops the gallery's aspect-ratio image from widening its column. */}
+      <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start lg:gap-20">
         <ProductGallery images={product.images} name={product.name} />
 
         <div className="lg:sticky lg:top-28 lg:self-start lg:py-4">
@@ -97,8 +98,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             </Disclosure>
             <Disclosure title="Delivery & returns">
               <p>
-                Free nationwide delivery on orders over {formatPrice(FREE_SHIPPING_THRESHOLD_CENTS)} — 1–2 working days in
-                Lagos, 2–5 elsewhere in Nigeria. Unopened items may be returned within 14 days for a full refund.
+                Free nationwide delivery on orders over {formatPrice(FREE_SHIPPING_THRESHOLD_CENTS)} — 3–5 business days
+                across the contiguous US. Unopened items may be returned within 14 days for a full refund.
               </p>
             </Disclosure>
           </div>

@@ -2,7 +2,7 @@
 
 /*
  * Velour Skin design tokens.
- * Warm, editorial palette: cream / sand / burgundy. Text colours are
+ * Warm, editorial palette: cream / sand / burgundy. Text colors are
  * contrast-checked against WCAG 2.2 AA on every surface they are used on.
  */
 @theme {
@@ -109,6 +109,9 @@
  * with [data-hero] gets an overlaid header until the visitor scrolls — pure
  * CSS, so there is no flash before hydration and no route-specific JS.
  * Deliberately unlayered so it overrides the header's Tailwind utilities.
+ *
+ * Next.js keeps previously visited pages mounted but hidden (display: none)
+ * during client navigation, so a hidden hero must not count.
  */
 .site-header {
   transition:
@@ -117,14 +120,14 @@
     border-color 0.4s var(--ease-luxe);
 }
 
-html:has([data-hero]) .site-header:not([data-scrolled="true"]) {
+html:has([data-hero]:not([style*="display: none"], [style*="display: none"] [data-hero])) .site-header:not([data-scrolled="true"]) {
   background-color: transparent;
   border-color: transparent;
   color: var(--color-porcelain);
   backdrop-filter: none;
 }
 
-html:has([data-hero]) .site-header:not([data-scrolled="true"]) .site-header-icon:hover {
+html:has([data-hero]:not([style*="display: none"], [style*="display: none"] [data-hero])) .site-header:not([data-scrolled="true"]) .site-header-icon:hover {
   background-color: rgb(255 255 255 / 0.12);
 }
 

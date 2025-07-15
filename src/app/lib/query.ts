@@ -1,5 +1,5 @@
 /**
- * URL search params <-> typed catalogue query.
+ * URL search params <-> typed catalog query.
  *
  * Deliberately dependency-free (no zod) because it is shared by Server
  * Components and client-side filter controls, so it ships in the browser.
@@ -37,7 +37,7 @@ const isConcern = (v: string): v is SkinConcern =>
   (SKIN_CONCERNS as readonly string[]).includes(v);
 const isSort = (v: string): v is SortOption => (SORT_OPTIONS as readonly string[]).includes(v);
 
-/** Parses a whole-currency amount (e.g. Naira) from the URL into minor units. */
+/** Parses a whole-currency amount (e.g. dollars) from the URL into minor units. */
 function parseMajorUnits(value: string | undefined): number | undefined {
   if (!value) return undefined;
   const n = Number(value);
@@ -82,7 +82,7 @@ export function parseProductQuery(
   };
 }
 
-/** Serialises a query back to URL params (omitting defaults) for links. */
+/** Serializes a query back to URL params (omitting defaults) for links. */
 export function serializeProductQuery(
   query: Partial<ProductQuery>,
   options: { includeCategory?: boolean } = {},

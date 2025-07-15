@@ -1,5 +1,5 @@
 import type Stripe from "stripe";
-import { updateOrderStatusBySession } from "@/app/lib/orders";
+import { updateOrderStatus } from "@/app/lib/orders";
 import { constructWebhookEvent, isPaymentConfigured } from "@/app/lib/payment";
 import { isAdminConfigured } from "@/app/lib/supabase/admin";
 import { statusForEvent } from "@/app/lib/payment-events";
@@ -34,16 +34,13 @@ export async function POST(request: Request) {
   }
 
   if (!isAdminConfigured()) {
-    console.warn(`[stripe-webhook] ${event.type} received but order storage is not configured`);
-    return Response.json({ received: true, stored: false });
+    // Fail loudly so Stripe keeps retrying instead of the event being lost.
+    console.error(`[stripe-webhook] ${event.type} received but order storage is not configured`);
+    return Response.json({ error: "Order storage is not configured" }, { status: 503 });
   }
 
   try {
-    const updated = await updateOrderStatusBySession(
-      transition.sessionId,
-      transition.status,
-      transition.paymentIntentId,
-    );
+    const updated = await updateOrderStatus(transition, transition.status);
     return Response.json({ received: true, updated });
   } catch (error) {
     console.error("[stripe-webhook] failed to update order", error);

@@ -79,7 +79,7 @@ const ORDERING: Record<SortOption, Array<[column: string, ascending: boolean]>> 
 };
 
 function fail(context: string, error: { message: string }): never {
-  throw new Error(`Supabase catalogue error (${context}): ${error.message}`);
+  throw new Error(`Supabase catalog error (${context}): ${error.message}`);
 }
 
 export const supabaseCatalog: CatalogRepository = {

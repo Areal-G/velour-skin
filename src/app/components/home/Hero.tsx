@@ -72,9 +72,9 @@ export function Hero() {
             id="hero-heading"
             className="font-display text-[clamp(4.2rem,15vw,12.5rem)] leading-[0.82] font-normal tracking-[0.03em] uppercase"
           >
-            <Line delay={0.2}>Maison</Line>{" "}
+            <Line delay={0.2}>Velour</Line>{" "}
             <Line delay={0.38}>
-              <span className="pl-[0.9em]">Aura</span>
+              <span className="pl-[0.9em]">Skin</span>
             </Line>
             <span className="sr-only"> — luxury skincare, considered</span>
           </h1>

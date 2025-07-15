@@ -26,8 +26,8 @@ export const CATEGORIES: Category[] = [
     image: "/images/products/serum-3.jpg",
   },
   {
-    slug: "moisturisers",
-    name: "Moisturisers",
+    slug: "moisturizers",
+    name: "Moisturizers",
     tagline: "Comfort that lasts",
     description:
       "Creams and emulsions that seal in hydration and support a resilient, supple complexion.",

@@ -7,7 +7,7 @@ export interface CartItem {
   image: string;
   /**
    * Price shown when the item was added. Display only — the server always
-   * re-prices the cart from the catalogue before taking payment.
+   * re-prices the cart from the catalog before taking payment.
    */
   unitPriceCents: number;
   quantity: number;

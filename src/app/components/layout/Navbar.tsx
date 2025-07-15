@@ -9,7 +9,7 @@ import { CATEGORIES } from "@/app/data/categories";
 const PRIMARY_LINKS = [
   { href: "/products", label: "Shop" },
   { href: "/categories/serums", label: "Serums" },
-  { href: "/categories/moisturisers", label: "Moisturisers" },
+  { href: "/categories/moisturizers", label: "Moisturizers" },
   { href: "/categories/masks", label: "Rituals" },
   { href: "/products?sort=newest", label: "New in" },
 ];

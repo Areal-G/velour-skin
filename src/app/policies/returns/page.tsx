@@ -13,11 +13,10 @@ export default function ReturnsPage() {
     <PolicyPage title="Delivery & returns" path="/policies/returns" updated="15 October 2026">
       <h2>Delivery</h2>
       <ul>
-        <li>Lagos: 1–2 working days.</li>
-        <li>Abuja, Port Harcourt and other major cities: 2–3 working days.</li>
-        <li>Elsewhere in Nigeria: 3–5 working days.</li>
-        <li>Free delivery on orders over ₦100,000; otherwise a flat ₦3,500 nationwide fee.</li>
-        <li>Orders placed before 12pm on a working day are dispatched the same day. Our courier will call you before delivery.</li>
+        <li>Contiguous US: 3–5 business days.</li>
+        <li>Alaska, Hawaii and APO/FPO addresses: 5–8 business days.</li>
+        <li>Free delivery on orders over $100; otherwise a flat $5 nationwide fee.</li>
+        <li>Orders placed before 12pm ET on a business day ship the same day. You will receive tracking details by email.</li>
       </ul>
       <h2>Returns</h2>
       <p>
@@ -26,7 +25,7 @@ export default function ReturnsPage() {
       </p>
       <h2>Refunds</h2>
       <p>
-        Refunds are issued to the original payment method within 5–7 working days of your return being
+        Refunds are issued to the original payment method within 5–7 business days of your return being
         received. You will receive an email once it has been processed.
       </p>
     </PolicyPage>

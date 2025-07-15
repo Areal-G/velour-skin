@@ -5,7 +5,7 @@ import { expect, test } from "./fixtures";
 const STRIPE_ENABLED = process.env.E2E_STRIPE_ENABLED === "1";
 
 async function addSerumToBag(page: Page, quantity = 1) {
-  await page.goto("/products/aura-renewal-serum");
+  await page.goto("/products/velour-renewal-serum");
   for (let i = 1; i < quantity; i++) await page.getByRole("button", { name: "Increase quantity" }).click();
   await page.getByTestId("add-to-cart").click();
   await expect(page.getByTestId("add-to-cart")).toContainText("Added to bag");
@@ -18,12 +18,12 @@ test.describe("bag", () => {
 
     await page.goto("/cart");
     await expect(page.getByTestId("cart-item")).toHaveCount(1);
-    await expect(page.getByTestId("cart-total")).toHaveText("₦71,500"); // ₦68,000 + ₦3,500 delivery
+    await expect(page.getByTestId("cart-total")).toHaveText("$73"); // $68 + $5 delivery
 
-    await page.getByRole("button", { name: "Increase quantity of Aura Renewal Serum" }).click();
-    await expect(page.getByTestId("cart-total")).toHaveText("₦136,000"); // free delivery over ₦100,000
+    await page.getByRole("button", { name: "Increase quantity of Velour Renewal Serum" }).click();
+    await expect(page.getByTestId("cart-total")).toHaveText("$136"); // free delivery over $100
 
-    await page.getByRole("button", { name: "Remove Aura Renewal Serum" }).click();
+    await page.getByRole("button", { name: "Remove Velour Renewal Serum" }).click();
     await expect(page.getByRole("heading", { name: "Your bag is empty" })).toBeVisible();
   });
 
@@ -31,7 +31,7 @@ test.describe("bag", () => {
     await page.goto("/products/velvet-hand-cream");
     await page.getByTestId("add-to-cart").click();
     await page.goto("/cart");
-    await expect(page.getByTestId("cart-total")).toHaveText("₦25,500");
+    await expect(page.getByTestId("cart-total")).toHaveText("$27");
   });
 
   test("persists across reloads", async ({ page }) => {
@@ -56,10 +56,11 @@ test.describe("checkout", () => {
     await page.goto("/checkout");
     await page.getByLabel("Email address").fill("e2e@example.com");
     await page.getByLabel("Full name").fill("Test Customer");
-    await page.getByLabel("Phone number").fill("0803 123 4567");
-    await page.getByLabel("Street address").fill("12 Admiralty Way");
-    await page.getByLabel("Town or city").fill("Lekki");
-    await page.getByLabel("State").selectOption("Lagos");
+    await page.getByLabel("Phone number").fill("(212) 555-0147");
+    await page.getByLabel("Street address").fill("245 W 17th St");
+    await page.getByLabel("City").fill("New York");
+    await page.getByLabel("State").selectOption("NY");
+    await page.getByLabel("ZIP code").fill("10011");
     await page.getByTestId("pay-button").click();
     await page.waitForURL(/checkout\.stripe\.com/, { timeout: 30_000 });
   });
@@ -75,7 +76,7 @@ test.describe("checkout", () => {
   test("checkout API refuses to fake a payment when unconfigured", async ({ request }) => {
     test.skip(STRIPE_ENABLED, "only applies without Stripe keys");
     const response = await request.post("/api/checkout", {
-      data: { items: [{ productId: "ma-00001", variantId: "ma-00001-15ml", quantity: 1 }], shipping: {} },
+      data: { items: [{ productId: "vs-00001", variantId: "vs-00001-15ml", quantity: 1 }], shipping: {} },
     });
     expect(response.status()).toBe(503);
     expect((await response.json()).url).toBeUndefined();
@@ -102,15 +103,7 @@ test.describe("checkout", () => {
 
   test("cancel page reassures the customer", async ({ page }) => {
     await page.goto("/checkout/cancel");
-    await expect(page.getByRole("heading", { name: "Checkout cancelled" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Checkout canceled" })).toBeVisible();
     await expect(page.getByText("No payment was taken")).toBeVisible();
-  });
-});
-
-test.describe("accounts", () => {
-  test("account pages degrade gracefully without Supabase", async ({ page }) => {
-    test.skip(process.env.E2E_SUPABASE_ENABLED === "1", "only applies without Supabase");
-    await page.goto("/account");
-    await expect(page.getByRole("heading", { name: "Accounts are coming soon" })).toBeVisible();
   });
 });

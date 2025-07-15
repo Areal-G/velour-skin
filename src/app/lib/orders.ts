@@ -1,4 +1,5 @@
 import "server-only";
+import { isSupabaseConfigured } from "@/app/lib/env";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { createClient } from "@/app/lib/supabase/server";
 import type { PricedLine } from "@/app/lib/cart-pricing";
@@ -57,10 +58,12 @@ function mapOrder(row: OrderRow): Order {
 
 // ---------------------------------------------------------------------------
 // Customer reads — run as the signed-in user, so RLS limits them to their own
-// orders. The `userId` filter is defence in depth, not the security boundary.
+// orders. The `userId` filter is defense in depth, not the security boundary.
 // ---------------------------------------------------------------------------
 
 export async function getOrdersForUser(userId: string): Promise<Order[]> {
+  // Orders live in Supabase; with the built-in auth provider there are none yet.
+  if (!isSupabaseConfigured()) return [];
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("orders")
@@ -74,7 +77,7 @@ export async function getOrdersForUser(userId: string): Promise<Order[]> {
 }
 
 export async function getOrderForUser(userId: string, orderId: string): Promise<Order | null> {
-  if (!UUID_RE.test(orderId)) return null;
+  if (!UUID_RE.test(orderId) || !isSupabaseConfigured()) return null;
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("orders")
@@ -144,27 +147,43 @@ export async function attachCheckoutSession(orderId: string, sessionId: string) 
 }
 
 /**
- * Idempotently transitions the order linked to a Stripe Checkout Session.
- * Returns `true` if a row changed. Safe to call repeatedly (webhook retries,
- * success-page reloads) because the update is conditional on the prior state.
+ * Idempotently transitions the order a Stripe event refers to. Returns `true`
+ * if a row changed. Safe to call repeatedly (webhook retries, success-page
+ * reloads) because every update is conditional on the prior state.
+ *
+ * The order is matched by Checkout Session ID first, then by our own order ID
+ * (sent to Stripe as `client_reference_id`), which also repairs the link if
+ * attaching the session failed, and finally by Payment Intent ID (refunds).
  */
-export async function updateOrderStatusBySession(
-  sessionId: string,
+export async function updateOrderStatus(
+  ref: { sessionId?: string | null; orderId?: string | null; paymentIntentId?: string | null },
   status: OrderStatus,
-  paymentIntentId?: string | null,
 ): Promise<boolean> {
   const fromStates = sourceStatesFor(status);
   if (fromStates.length === 0) return false;
-  const { data, error } = await createAdminClient()
-    .from("orders")
-    .update({
-      status,
-      ...(paymentIntentId ? { stripe_payment_intent_id: paymentIntentId } : {}),
-      updated_at: new Date().toISOString(),
-    })
-    .eq("stripe_session_id", sessionId)
-    .in("status", fromStates)
-    .select("id");
-  if (error) throw new Error(`Could not update order: ${error.message}`);
-  return (data?.length ?? 0) > 0;
+  const admin = createAdminClient();
+  const changes = {
+    status,
+    ...(ref.paymentIntentId ? { stripe_payment_intent_id: ref.paymentIntentId } : {}),
+    updated_at: new Date().toISOString(),
+  };
+
+  const attempts: Array<[column: string, value: string, extra?: Record<string, string>]> = [];
+  if (ref.sessionId) attempts.push(["stripe_session_id", ref.sessionId]);
+  if (ref.orderId && UUID_RE.test(ref.orderId)) {
+    attempts.push(["id", ref.orderId, ref.sessionId ? { stripe_session_id: ref.sessionId } : undefined]);
+  }
+  if (!ref.sessionId && ref.paymentIntentId) attempts.push(["stripe_payment_intent_id", ref.paymentIntentId]);
+
+  for (const [column, value, extra] of attempts) {
+    const { data, error } = await admin
+      .from("orders")
+      .update({ ...changes, ...extra })
+      .eq(column, value)
+      .in("status", fromStates)
+      .select("id");
+    if (error) throw new Error(`Could not update order: ${error.message}`);
+    if ((data?.length ?? 0) > 0) return true;
+  }
+  return false;
 }

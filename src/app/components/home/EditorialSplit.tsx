@@ -24,7 +24,7 @@ export function EditorialSplit() {
       </div>
       <div className="flex flex-col justify-center px-6 py-16 sm:px-12 lg:px-20">
         <Reveal>
-          <p className="text-[11px] font-medium tracking-[0.3em] text-burgundy-100 uppercase">The Maison ritual</p>
+          <p className="text-[11px] font-medium tracking-[0.3em] text-burgundy-100 uppercase">The Velour ritual</p>
           <h2 id="ritual-heading" className="mt-5 font-display text-5xl leading-[1.02] uppercase md:text-7xl">
             Three steps.
             <br />

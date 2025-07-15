@@ -9,7 +9,7 @@ import type { Category } from "@/app/types/category";
 import type { ProductQuery } from "@/app/types/product";
 
 /**
- * Cached catalogue facade used by every page.
+ * Cached catalog facade used by every page.
  *
  * Results are cached with `"use cache"` (Next.js Cache Components) so listing
  * and product pages are prerendered into the static shell and revalidated in

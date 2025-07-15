@@ -31,7 +31,7 @@ describe("parseProductQuery", () => {
     expect(parseProductQuery({ min: "-5", max: "abc" })).toMatchObject({ minPrice: undefined, maxPrice: undefined });
   });
 
-  it("sanitises page and sort", () => {
+  it("sanitizes page and sort", () => {
     expect(parseProductQuery({ page: "-3" }).page).toBe(1);
     expect(parseProductQuery({ page: "abc" }).page).toBe(1);
     expect(parseProductQuery({ page: "99999999" }).page).toBe(MAX_PAGE);

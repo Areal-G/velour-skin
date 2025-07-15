@@ -16,10 +16,10 @@ import {
 import type { CartItem } from "@/app/types/cart";
 
 const item = (overrides: Partial<CartItem> = {}): Omit<CartItem, "quantity"> => ({
-  productId: "ma-00001",
-  variantId: "ma-00001-30ml",
-  slug: "aura-renewal-serum",
-  name: "Aura Renewal Serum",
+  productId: "vs-00001",
+  variantId: "vs-00001-30ml",
+  slug: "velour-renewal-serum",
+  name: "Velour Renewal Serum",
   variantLabel: "30 ml",
   image: "/images/products/dropper-claret.svg",
   unitPriceCents: 6800,
@@ -42,7 +42,7 @@ describe("cartReducer", () => {
 
   it("keeps different variants of the same product as separate lines", () => {
     let state = cartReducer(EMPTY_CART, { type: "add", item: item() });
-    state = cartReducer(state, { type: "add", item: item({ variantId: "ma-00001-50ml" }) });
+    state = cartReducer(state, { type: "add", item: item({ variantId: "vs-00001-50ml" }) });
     expect(state.items).toHaveLength(2);
   });
 
@@ -93,7 +93,7 @@ describe("parseStoredCart", () => {
     expect(parseStoredCart(JSON.stringify({ items: "nope" }))).toBe(EMPTY_CART);
   });
 
-  it("drops malformed lines and sanitises quantities", () => {
+  it("drops malformed lines and sanitizes quantities", () => {
     const raw = JSON.stringify({
       items: [
         { ...item(), quantity: 500 },

@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
  *
  * - `LazyMotion` + `m` components keep the initial bundle small: only the
  *   DOM animation features are loaded, not the full `motion` component.
- * - `reducedMotion="user"` honours the OS "reduce motion" setting by
+ * - `reducedMotion="user"` honors the OS "reduce motion" setting by
  *   disabling transform/layout animations automatically.
  */
 export function MotionProvider({ children }: { children: ReactNode }) {

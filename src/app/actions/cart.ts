@@ -13,7 +13,7 @@ export type CartValidationResult =
   | { ok: false };
 
 /**
- * Re-prices the visitor's bag against the live catalogue so the cart page
+ * Re-prices the visitor's bag against the live catalog so the cart page
  * always shows current prices and flags items that can no longer be bought.
  * Accepts only IDs and quantities; prices sent by the client are never read.
  */

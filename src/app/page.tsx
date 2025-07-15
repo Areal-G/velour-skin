@@ -61,7 +61,7 @@ export default async function HomePage() {
           <Reveal className="relative aspect-[4/5] overflow-hidden bg-stone">
             <Image
               src={EDITORIAL.serumApply}
-              alt="A woman smoothing moisturiser onto her cheek"
+              alt="A woman smoothing moisturizer onto her cheek"
               fill
               sizes="(min-width: 768px) 45vw, 100vw"
               className="object-cover"

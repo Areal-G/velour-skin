@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { MAX_QUANTITY_PER_LINE } from "@/app/lib/pricing";
-import { NIGERIAN_STATES, SHIPPING_COUNTRIES } from "@/app/lib/shipping";
+import { SHIPPING_COUNTRIES, US_STATE_CODES } from "@/app/lib/shipping";
 
-// Normalise first, then validate, so pasted addresses with stray spaces pass.
+// Normalize first, then validate, so pasted addresses with stray spaces pass.
 const email = z
   .string()
   .trim()
@@ -35,32 +35,29 @@ const optionalText = (max: number) =>
     .transform((v) => v || undefined);
 
 /**
- * Nigerian mobile numbers, local (0803 123 4567) or international
- * (+234 803 123 4567). Normalised to E.164 (+2348031234567).
+ * US phone numbers, local ((212) 555-0147) or international
+ * (+1 212 555 0147). Normalized to E.164 (+12125550147).
  */
-const nigerianPhone = z
+const usPhone = z
   .string()
-  .transform((v) => v.replace(/[\s()-]/g, ""))
-  .pipe(z.string().regex(/^(?:\+?234|0)[789][01]\d{8}$/, { error: "Enter a valid Nigerian phone number" }))
-  .transform((v) => `+234${v.replace(/^(?:\+?234|0)/, "")}`);
+  .transform((v) => v.replace(/[\s().-]/g, ""))
+  .pipe(z.string().regex(/^(?:\+?1)?[2-9]\d{2}[2-9]\d{6}$/, { error: "Enter a valid US phone number" }))
+  .transform((v) => `+1${v.slice(-10)}`);
 
 export const shippingSchema = z.object({
   email,
   fullName: z.string().trim().min(2, { error: "Enter your full name" }).max(100),
   line1: z.string().trim().min(3, { error: "Enter your street address" }).max(120),
   line2: optionalText(120),
-  city: z.string().trim().min(2, { error: "Enter your town or city" }).max(80),
-  state: z.enum(NIGERIAN_STATES, { error: "Choose your state" }),
-  // Postcodes are rarely used for Nigerian deliveries, so this is optional.
+  city: z.string().trim().min(2, { error: "Enter your city" }).max(80),
+  state: z.enum(US_STATE_CODES, { error: "Choose your state" }),
   postcode: z
-    .string()
+    .string({ error: "Enter your ZIP code" })
     .trim()
-    .regex(/^(\d{6})?$/, { error: "Nigerian postcodes have 6 digits" })
-    .optional()
-    .transform((v) => v || undefined),
-  country: z.enum(countryCodes, { error: "We currently deliver within Nigeria only" }).default("NG"),
-  // Required: couriers call ahead to arrange delivery.
-  phone: nigerianPhone,
+    .regex(/^\d{5}(?:-\d{4})?$/, { error: "Enter a 5-digit ZIP code" }),
+  country: z.enum(countryCodes, { error: "We currently deliver within the United States only" }).default("US"),
+  // Required: carriers may need to reach you about delivery.
+  phone: usPhone,
 });
 
 export type ShippingInput = z.infer<typeof shippingSchema>;
@@ -102,6 +99,16 @@ export function fieldErrors(error: z.ZodError): Record<string, string> {
 /** Only allow same-origin relative redirects (prevents open redirects). */
 export function safeRedirectPath(value: unknown, fallback = "/account"): string {
   if (typeof value !== "string") return fallback;
-  if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return fallback;
-  return value;
+  // URL parsers strip tabs/newlines and treat "\" like "/", so "/\t/evil.com"
+  // would become "//evil.com". Reject them outright, then confirm the parsed
+  // result stays on our own origin.
+  if (!value.startsWith("/") || /[\u0000-\u001f\u007f\\]/.test(value)) return fallback;
+  const base = "http://same-origin.invalid";
+  try {
+    const url = new URL(value, base);
+    if (url.origin !== base) return fallback;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return fallback;
+  }
 }

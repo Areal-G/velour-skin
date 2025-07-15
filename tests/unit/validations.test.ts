@@ -8,35 +8,35 @@ import {
 } from "@/app/lib/validations";
 
 const validShipping = {
-  email: "  Jane@Example.COM ",
-  fullName: "Jane Doe",
-  line1: "12 Admiralty Way",
+  email: "  Test@Example.COM ",
+  fullName: "Test Customer",
+  line1: "245 W 17th St",
   line2: "",
-  city: "Lekki",
-  state: "Lagos",
-  postcode: "",
-  country: "NG",
-  phone: "0803 123 4567",
+  city: "Brooklyn",
+  state: "NY",
+  postcode: "11201",
+  country: "US",
+  phone: "(212) 555-0147",
 };
 
 describe("shippingSchema", () => {
-  it("normalises valid input", () => {
+  it("normalizes valid input", () => {
     const result = shippingSchema.parse(validShipping);
-    expect(result.email).toBe("jane@example.com");
+    expect(result.email).toBe("test@example.com");
     expect(result.line2).toBeUndefined();
-    expect(result.postcode).toBeUndefined();
-    expect(result.phone).toBe("+2348031234567");
+    expect(result.postcode).toBe("11201");
+    expect(result.phone).toBe("+12125550147");
   });
 
-  it.each(["08031234567", "+234 803 123 4567", "234-803-123-4567", "0703 123 4567", "0913 123 4567"])(
-    "accepts Nigerian mobile format %s",
+  it.each(["2125550147", "+1 212 555 0147", "1-212-555-0147", "212.555.0147", "(415) 555-0123"])(
+    "accepts US phone format %s",
     (phone) => {
-      expect(shippingSchema.parse({ ...validShipping, phone }).phone).toMatch(/^\+234[789][01]\d{8}$/);
+      expect(shippingSchema.parse({ ...validShipping, phone }).phone).toMatch(/^\+1[2-9]\d{2}[2-9]\d{6}$/);
     },
   );
 
-  it("defaults the country to Nigeria and rejects others", () => {
-    expect(shippingSchema.parse({ ...validShipping, country: undefined }).country).toBe("NG");
+  it("defaults the country to the US and rejects others", () => {
+    expect(shippingSchema.parse({ ...validShipping, country: undefined }).country).toBe("US");
     expect(shippingSchema.safeParse({ ...validShipping, country: "GB" }).success).toBe(false);
   });
 
@@ -56,10 +56,10 @@ describe("shippingSchema", () => {
 
 describe("cartLinesSchema", () => {
   it("accepts IDs and quantities only, within limits", () => {
-    expect(cartLinesSchema.safeParse([{ productId: "ma-1", variantId: "ma-1-30ml", quantity: 2 }]).success).toBe(true);
+    expect(cartLinesSchema.safeParse([{ productId: "vs-1", variantId: "vs-1-30ml", quantity: 2 }]).success).toBe(true);
     expect(cartLinesSchema.safeParse([]).success).toBe(false);
-    expect(cartLinesSchema.safeParse([{ productId: "ma-1", variantId: "v", quantity: 11 }]).success).toBe(false);
-    expect(cartLinesSchema.safeParse([{ productId: "ma-1", variantId: "v", quantity: 1.5 }]).success).toBe(false);
+    expect(cartLinesSchema.safeParse([{ productId: "vs-1", variantId: "v", quantity: 11 }]).success).toBe(false);
+    expect(cartLinesSchema.safeParse([{ productId: "vs-1", variantId: "v", quantity: 1.5 }]).success).toBe(false);
   });
 
   it("strips client-supplied prices", () => {
@@ -69,7 +69,7 @@ describe("cartLinesSchema", () => {
 });
 
 describe("registerSchema", () => {
-  const base = { fullName: "Jane Doe", email: "jane@example.com", password: "s3curepass", confirmPassword: "s3curepass" };
+  const base = { fullName: "Test Customer", email: "test@example.com", password: "s3curepass", confirmPassword: "s3curepass" };
 
   it("accepts a strong, matching password", () => {
     expect(registerSchema.safeParse(base).success).toBe(true);
@@ -89,6 +89,10 @@ describe("safeRedirectPath", () => {
     ["https://evil.example", "/account"],
     ["//evil.example", "/account"],
     ["/\\evil.example", "/account"],
+    ["/\t/evil.example", "/account"],
+    ["/\n/evil.example", "/account"],
+    ["/%09/evil.example", "/%09/evil.example"],
+    ["/products?q=serum#top", "/products?q=serum#top"],
     [null, "/account"],
   ])("%s → %s", (input, expected) => {
     expect(safeRedirectPath(input)).toBe(expected);

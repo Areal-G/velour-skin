@@ -19,7 +19,7 @@ export function renderOgImage({ eyebrow, title, footer }: { eyebrow: string; tit
           fontFamily: "serif",
         }}
       >
-        <div style={{ display: "flex", fontSize: 30, letterSpacing: 12, color: "#6e1e2e" }}>MAISON AURA</div>
+        <div style={{ display: "flex", fontSize: 30, letterSpacing: 12, color: "#6e1e2e" }}>VELOUR SKIN</div>
         <div style={{ display: "flex", flexDirection: "column", maxWidth: 900 }}>
           <div style={{ display: "flex", fontSize: 26, letterSpacing: 6, color: "#6f5f52", textTransform: "uppercase" }}>
             {eyebrow}

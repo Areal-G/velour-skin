@@ -4,7 +4,7 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- Catalogue
+-- Catalog
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.categories (
@@ -64,8 +64,8 @@ create table if not exists public.orders (
   user_id                   uuid references auth.users (id) on delete set null,
   email                     text not null,
   status                    text not null default 'pending'
-                            check (status in ('pending', 'paid', 'fulfilled', 'failed', 'cancelled', 'refunded')),
-  currency                  text not null default 'gbp',
+                            check (status in ('pending', 'paid', 'fulfilled', 'failed', 'canceled', 'refunded')),
+  currency                  text not null default 'usd',
   subtotal_cents            int  not null check (subtotal_cents >= 0),
   shipping_cents            int  not null check (shipping_cents >= 0),
   total_cents               int  not null check (total_cents >= 0),
@@ -106,7 +106,7 @@ create table if not exists public.newsletter_subscribers (
 -- Row Level Security
 --
 -- The browser only ever holds the publishable key, so RLS is the security
--- boundary. Catalogue data is public and read-only; customers can read only
+-- boundary. Catalog data is public and read-only; customers can read only
 -- their own orders. All writes go through trusted server code using the
 -- secret key (which bypasses RLS) — there are deliberately no insert/update
 -- policies for anonymous or authenticated users.

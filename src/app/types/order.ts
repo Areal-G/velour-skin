@@ -3,7 +3,7 @@ export const ORDER_STATUSES = [
   "paid",
   "fulfilled",
   "failed",
-  "cancelled",
+  "canceled",
   "refunded",
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];

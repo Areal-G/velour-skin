@@ -57,7 +57,7 @@ export function CartSummary({ totals, action, title = "Order summary" }: CartSum
           </dd>
         </div>
       </dl>
-      <p className="mt-1 text-xs text-taupe">Prices include 7.5% VAT.</p>
+      <p className="mt-1 text-xs text-taupe">All prices in US dollars.</p>
 
       {action && <div className="mt-6">{action}</div>}
 

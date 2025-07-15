@@ -10,7 +10,7 @@ interface ListingHeroProps {
   crumbs: Crumb[];
 }
 
-/** Editorial banner for catalogue and category pages. */
+/** Editorial banner for catalog and category pages. */
 export function ListingHero({ eyebrow, title, description, image, crumbs }: ListingHeroProps) {
   return (
     <header className="grid border-b border-beige-200 md:grid-cols-[1.15fr_1fr]">

@@ -1,9 +1,9 @@
 /**
  * Money helpers. All amounts are stored as integers in the currency's minor
- * unit (kobo for NGN: ₦1 = 100 kobo) to avoid floating-point errors.
+ * unit (cents for USD: $1 = 100 cents) to avoid floating-point errors.
  */
-export const STORE_CURRENCY = "NGN";
-export const STORE_LOCALE = "en-NG";
+export const STORE_CURRENCY = "USD";
+export const STORE_LOCALE = "en-US";
 
 const formatters = new Map<string, Intl.NumberFormat>();
 
@@ -22,9 +22,9 @@ function getFormatter(currency: string, locale: string, wholeUnits: boolean): In
 }
 
 /**
- * Formats an integer amount in minor units (kobo) as a currency string.
- * Whole amounts are shown without decimals (₦68,000), as is conventional
- * for Naira retail pricing; fractional amounts keep their kobo (₦68,000.50).
+ * Formats an integer amount in minor units (cents) as a currency string.
+ * Whole amounts are shown without decimals ($68), as is conventional for
+ * luxury retail pricing; fractional amounts keep their cents ($68.50).
  */
 export function formatPrice(
   amountMinor: number,
@@ -36,7 +36,7 @@ export function formatPrice(
   return getFormatter(currency.toUpperCase(), locale, wholeUnits).format(amountMinor / 100);
 }
 
-/** Converts a major-unit amount (e.g. ₦12,500) to integer minor units (kobo). */
+/** Converts a major-unit amount (e.g. $12.50) to integer minor units (cents). */
 export function toMinorUnits(amount: number): number {
   if (!Number.isFinite(amount)) throw new RangeError("Amount must be a finite number");
   return Math.round(amount * 100);
@@ -47,7 +47,7 @@ export function fromMinorUnits(amountMinor: number): number {
   return amountMinor / 100;
 }
 
-/** Major-unit decimal string for structured data, e.g. `"68000.00"`. */
+/** Major-unit decimal string for structured data, e.g. `"68.00"`. */
 export function toDecimalString(amountMinor: number): string {
   return (amountMinor / 100).toFixed(2);
 }

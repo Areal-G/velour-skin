@@ -2,14 +2,14 @@ import { describe, expect, it } from "vitest";
 import { formatPrice, fromMinorUnits, toDecimalString, toMinorUnits } from "@/app/lib/currency";
 
 describe("formatPrice", () => {
-  it("formats kobo as whole Naira by default", () => {
-    expect(formatPrice(6_800_000)).toBe("₦68,000");
-    expect(formatPrice(350_000)).toBe("₦3,500");
-    expect(formatPrice(0)).toBe("₦0");
+  it("formats cents as whole dollars by default", () => {
+    expect(formatPrice(6_800)).toBe("$68");
+    expect(formatPrice(500)).toBe("$5");
+    expect(formatPrice(0)).toBe("$0");
   });
 
-  it("keeps kobo when an amount is not a whole Naira", () => {
-    expect(formatPrice(123_456_789)).toBe("₦1,234,567.89");
+  it("keeps cents when an amount is not a whole dollar", () => {
+    expect(formatPrice(123_456_789)).toBe("$1,234,567.89");
   });
 
   it("supports other currencies (case-insensitive codes)", () => {

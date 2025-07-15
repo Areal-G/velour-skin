@@ -2,11 +2,11 @@ import type { OrderStatus } from "@/app/types/order";
 
 /** Statuses an order may move to from each state (prevents regressions). */
 export const ALLOWED_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
-  pending: ["paid", "failed", "cancelled"],
+  pending: ["paid", "failed", "canceled"],
   paid: ["fulfilled", "refunded"],
   fulfilled: ["refunded"],
   failed: ["paid"],
-  cancelled: [],
+  canceled: [],
   refunded: [],
 };
 
@@ -22,6 +22,6 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   paid: "Confirmed",
   fulfilled: "Dispatched",
   failed: "Payment failed",
-  cancelled: "Cancelled",
+  canceled: "Canceled",
   refunded: "Refunded",
 };

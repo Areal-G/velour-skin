@@ -35,5 +35,5 @@ export async function subscribeToNewsletter(
     console.error("[newsletter] subscribe failed", error.message);
     return { status: "error", message: "Something went wrong. Please try again." };
   }
-  return { status: "success", message: "Thank you — welcome to the Maison." };
+  return { status: "success", message: "Thank you — welcome to Velour." };
 }

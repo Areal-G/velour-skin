@@ -29,8 +29,8 @@ function countActiveFilters(query: ProductQuery, includeCategory: boolean): numb
 }
 
 /**
- * Filterable, sortable, paginated product listing shared by the catalogue,
- * category and search pages. Data comes from the cached catalogue facade, so
+ * Filterable, sortable, paginated product listing shared by the catalog,
+ * category and search pages. Data comes from the cached catalog facade, so
  * repeat visits to the same filter combination are served from cache.
  */
 export async function ProductListing({ query, basePath, showCategoryFilter = false }: ProductListingProps) {
@@ -60,7 +60,7 @@ export async function ProductListing({ query, basePath, showCategoryFilter = fal
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-beige-200 pb-4">
           <p id="results-count" className="text-sm text-taupe" role="status">
             {pluralize(result.total, "product")}
-            {result.totalPages > 1 && ` · Page ${result.page} of ${result.totalPages.toLocaleString("en-NG")}`}
+            {result.totalPages > 1 && ` · Page ${result.page} of ${result.totalPages.toLocaleString("en-US")}`}
           </p>
           <ProductSort key={stateKey} query={query} basePath={basePath} includeCategory={showCategoryFilter} />
         </div>

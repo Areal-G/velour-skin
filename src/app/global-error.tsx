@@ -3,7 +3,7 @@
 /** Last-resort boundary for errors thrown by the root layout itself. */
 export default function GlobalError({ retry }: { error: Error & { digest?: string }; retry: () => void }) {
   return (
-    <html lang="en-NG">
+    <html lang="en-US">
       <body style={{ fontFamily: "Georgia, serif", background: "#faf6f0", color: "#2b211d", textAlign: "center", padding: "6rem 1rem" }}>
         <h1 style={{ fontWeight: 500 }}>Velour Skin is momentarily unavailable</h1>
         <p>Please try again in a moment.</p>

@@ -1,5 +1,5 @@
 import { CATEGORY_BY_SLUG } from "@/app/data/categories";
-import { CURATED_COUNT, getDemoCatalogue } from "@/app/data/products";
+import { CURATED_COUNT, getDemoCatalog } from "@/app/data/products";
 import type { Product, ProductQuery, SortOption } from "@/app/types/product";
 import {
   paginate,
@@ -9,7 +9,7 @@ import {
 } from "@/app/lib/catalog/types";
 
 /**
- * In-memory catalogue with pre-computed indexes.
+ * In-memory catalog with pre-computed indexes.
  *
  * Each sort order is computed once (O(n log n)) and cached as an index array;
  * a listing request is then a single linear filter pass that stops collecting
@@ -27,7 +27,7 @@ let indexes: Indexes | null = null;
 
 function getIndexes(): Indexes {
   if (indexes) return indexes;
-  const products = getDemoCatalogue();
+  const products = getDemoCatalog();
   indexes = {
     products,
     bySlug: new Map(products.map((p) => [p.slug, p])),
@@ -141,6 +141,8 @@ export const demoCatalog: CatalogRepository = {
     const { products } = getIndexes();
     const order = sortedOrder("featured");
     const concerns = new Set(product.concerns);
+    // Skip photos already on screen so the row never shows the same picture twice.
+    const usedImages = new Set([product.image]);
     const out = [];
     for (const position of order) {
       const candidate = products[position];
@@ -148,8 +150,10 @@ export const demoCatalog: CatalogRepository = {
         candidate.id !== product.id &&
         candidate.categorySlug === product.categorySlug &&
         candidate.inStock &&
+        !usedImages.has(candidate.image) &&
         candidate.concerns.some((c) => concerns.has(c))
       ) {
+        usedImages.add(candidate.image);
         out.push(toSummary(candidate));
         if (out.length === limit) break;
       }

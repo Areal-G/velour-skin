@@ -3,7 +3,7 @@ const ITEMS = [
   "Vegan & cruelty-free",
   "Refillable glass",
   "Small-batch formulas",
-  "Free nationwide delivery over ₦100,000",
+  "Free nationwide delivery over $100",
   "Clinically studied actives",
 ];
 

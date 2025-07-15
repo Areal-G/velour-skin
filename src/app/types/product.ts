@@ -3,7 +3,7 @@ export type SkinType = (typeof SKIN_TYPES)[number];
 
 export const SKIN_CONCERNS = [
   "hydration",
-  "anti-ageing",
+  "anti-aging",
   "brightening",
   "blemishes",
   "redness",
@@ -50,7 +50,7 @@ export interface ProductSummary {
   skinTypes: SkinType[];
   concerns: SkinConcern[];
   inStock: boolean;
-  /** ISO-8601 date the product was added to the catalogue. */
+  /** ISO-8601 date the product was added to the catalog. */
   createdAt: string;
 }
 

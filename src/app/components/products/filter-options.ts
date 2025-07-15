@@ -18,7 +18,7 @@ export const SKIN_TYPE_LABELS: Record<SkinType, string> = {
 
 export const CONCERN_LABELS: Record<SkinConcern, string> = {
   hydration: "Hydration",
-  "anti-ageing": "Anti-ageing",
+  "anti-aging": "Anti-aging",
   brightening: "Brightening",
   blemishes: "Blemishes",
   redness: "Redness",
@@ -26,12 +26,12 @@ export const CONCERN_LABELS: Record<SkinConcern, string> = {
   firmness: "Firmness",
 };
 
-/** Price bands in whole Naira; `undefined` means unbounded. */
+/** Price bands in whole US dollars; `undefined` means unbounded. */
 export const PRICE_RANGES: Array<{ label: string; min?: number; max?: number }> = [
-  { label: "Under ₦30,000", max: 30_000 },
-  { label: "₦30,000 – ₦60,000", min: 30_000, max: 60_000 },
-  { label: "₦60,000 – ₦100,000", min: 60_000, max: 100_000 },
-  { label: "₦100,000 and above", min: 100_000 },
+  { label: "Under $30", max: 30 },
+  { label: "$30 – $60", min: 30, max: 60 },
+  { label: "$60 – $100", min: 60, max: 100 },
+  { label: "$100 and above", min: 100 },
 ];
 
 export const priceRangeValue = (r: { min?: number; max?: number }) => `${r.min ?? ""}-${r.max ?? ""}`;

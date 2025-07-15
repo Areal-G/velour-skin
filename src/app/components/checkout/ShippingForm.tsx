@@ -1,5 +1,5 @@
 import { Input, Select } from "@/app/components/ui/Input";
-import { NIGERIAN_STATES } from "@/app/lib/shipping";
+import { US_STATES } from "@/app/lib/shipping";
 
 interface ShippingFormProps {
   values?: Record<string, string>;
@@ -7,7 +7,7 @@ interface ShippingFormProps {
   disabled?: boolean;
 }
 
-/** Contact and Nigerian delivery address fields (uncontrolled, with autofill hints). */
+/** Contact and US delivery address fields (uncontrolled, with autofill hints). */
 export function ShippingForm({ values = {}, errors = {}, disabled }: ShippingFormProps) {
   return (
     <div className="space-y-10">
@@ -29,17 +29,17 @@ export function ShippingForm({ values = {}, errors = {}, disabled }: ShippingFor
           type="tel"
           inputMode="tel"
           autoComplete="shipping tel"
-          placeholder="0803 123 4567"
+          placeholder="(212) 555-0147"
           required
           defaultValue={values.phone}
           error={errors.phone}
-          hint="Our courier will call this number to arrange delivery."
+          hint="Our carrier may text or call about your delivery."
         />
       </fieldset>
 
       <fieldset disabled={disabled} className="space-y-5">
         <legend className="mb-5 font-serif text-3xl">Delivery address</legend>
-        <input type="hidden" name="country" value="NG" />
+        <input type="hidden" name="country" value="US" />
         <Input
           label="Full name"
           name="fullName"
@@ -52,13 +52,13 @@ export function ShippingForm({ values = {}, errors = {}, disabled }: ShippingFor
           label="Street address"
           name="line1"
           autoComplete="shipping address-line1"
-          placeholder="e.g. 12 Admiralty Way"
+          placeholder="e.g. 245 W 17th St"
           required
           defaultValue={values.line1}
           error={errors.line1}
         />
         <Input
-          label="Apartment, estate or landmark (optional)"
+          label="Apartment, suite or unit (optional)"
           name="line2"
           autoComplete="shipping address-line2"
           defaultValue={values.line2}
@@ -66,10 +66,10 @@ export function ShippingForm({ values = {}, errors = {}, disabled }: ShippingFor
         />
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
-            label="Town or city"
+            label="City"
             name="city"
             autoComplete="shipping address-level2"
-            placeholder="e.g. Lekki"
+            placeholder="e.g. Brooklyn"
             required
             defaultValue={values.city}
             error={errors.city}
@@ -79,26 +79,31 @@ export function ShippingForm({ values = {}, errors = {}, disabled }: ShippingFor
             name="state"
             autoComplete="shipping address-level1"
             required
-            defaultValue={values.state || "Lagos"}
+            defaultValue={values.state || ""}
             error={errors.state}
           >
-            {NIGERIAN_STATES.map((state) => (
-              <option key={state} value={state}>
-                {state}
+            <option value="" disabled>
+              Choose a state
+            </option>
+            {US_STATES.map((state) => (
+              <option key={state.code} value={state.code}>
+                {state.name}
               </option>
             ))}
           </Select>
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
-            label="Postcode (optional)"
+            label="ZIP code"
             name="postcode"
             inputMode="numeric"
             autoComplete="shipping postal-code"
+            placeholder="e.g. 10011"
+            required
             defaultValue={values.postcode}
             error={errors.postcode}
           />
-          <Input label="Country" name="countryDisplay" value="Nigeria" readOnly disabled />
+          <Input label="Country" name="countryDisplay" value="United States" readOnly disabled />
         </div>
       </fieldset>
     </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckoutForm } from "@/app/components/checkout/CheckoutForm";
 import { isPaymentConfigured } from "@/app/lib/payment";
+import { isAdminConfigured } from "@/app/lib/supabase/admin";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -27,7 +28,7 @@ export default function CheckoutPage() {
         </ol>
       </nav>
       <h1 className="mt-6 mb-10 text-5xl md:text-6xl">Checkout</h1>
-      <CheckoutForm paymentsEnabled={isPaymentConfigured()} />
+      <CheckoutForm paymentsEnabled={isPaymentConfigured() && isAdminConfigured()} />
     </div>
   );
 }

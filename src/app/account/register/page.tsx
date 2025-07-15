@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { AccountsUnavailable } from "@/app/components/account/AccountsUnavailable";
 import { RegisterForm } from "@/app/components/account/RegisterForm";
 import { Skeleton } from "@/app/components/ui/Skeleton";
 import { getCurrentUser } from "@/app/lib/auth";
-import { isSupabaseConfigured } from "@/app/lib/env";
 
 export const metadata: Metadata = {
   title: "Create an account",
@@ -25,12 +23,11 @@ export default function RegisterPage() {
 }
 
 async function Register() {
-  if (!isSupabaseConfigured()) return <AccountsUnavailable />;
   if (await getCurrentUser()) redirect("/account");
 
   return (
     <div className="bg-porcelain p-8 ring-1 ring-beige-200 sm:p-10">
-      <p className="eyebrow text-center">Join the Maison</p>
+      <p className="eyebrow text-center">Join Velour</p>
       <h1 className="mt-2 mb-8 text-center text-4xl">Create an account</h1>
       <RegisterForm />
     </div>

@@ -1,9 +1,9 @@
 import type { CartTotals } from "@/app/types/cart";
 
-/** Orders at or above this subtotal ship free (₦100,000, in kobo). */
-export const FREE_SHIPPING_THRESHOLD_CENTS = 10_000_000;
-/** Flat nationwide delivery fee (₦3,500, in kobo). */
-export const STANDARD_SHIPPING_CENTS = 350_000;
+/** Orders at or above this subtotal ship free ($100, in cents). */
+export const FREE_SHIPPING_THRESHOLD_CENTS = 10_000;
+/** Flat nationwide delivery fee ($5, in cents). */
+export const STANDARD_SHIPPING_CENTS = 500;
 export const MAX_QUANTITY_PER_LINE = 10;
 
 export function calculateShipping(subtotalCents: number): number {

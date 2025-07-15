@@ -74,9 +74,8 @@ export function Footer() {
       <div className="border-t border-porcelain/10">
         <div className="container-page flex flex-col gap-2 py-6 text-xs text-burgundy-100 sm:flex-row sm:justify-between">
           <p>
-            © <CopyrightYear /> Velour Skin. A portfolio demonstration store.
+            © <CopyrightYear /> Velour Skin.
           </p>
-          <p>Payments securely processed by Stripe · Photography via Unsplash</p>
         </div>
       </div>
     </footer>

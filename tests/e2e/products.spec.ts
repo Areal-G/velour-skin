@@ -9,7 +9,7 @@ const priceOf = (text: string | null) => Number((text ?? "").replace(/[^0-9.]/g,
  */
 const expectNoIndex = async (html: string) => expect(html).toMatch(/<meta name="robots" content="noindex"/);
 
-test.describe("storefront & catalogue", () => {
+test.describe("storefront & catalog", () => {
   test("homepage renders hero, bestsellers and structured data", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/Velour Skin/);
@@ -23,7 +23,7 @@ test.describe("storefront & catalogue", () => {
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /^https?:\/\/[^/]+\/?$/);
   });
 
-  test("catalogue lists 50,000 products with crawlable pagination", async ({ page }) => {
+  test("catalog lists 50,000 products with crawlable pagination", async ({ page }) => {
     await page.goto("/products");
     await expect(page.getByRole("status").filter({ hasText: "50,000 products" })).toBeVisible();
     await expect(page.getByTestId("product-card")).toHaveCount(24);
@@ -51,8 +51,8 @@ test.describe("storefront & catalogue", () => {
 
     await page.getByRole("checkbox", { name: "Sensitive" }).check();
     await expect(page).toHaveURL(/skin=sensitive/);
-    await page.getByRole("radio", { name: "₦30,000 – ₦60,000" }).check();
-    await expect(page).toHaveURL(/min=30000&max=60000/);
+    await page.getByRole("radio", { name: "$30 – $60" }).check();
+    await expect(page).toHaveURL(/min=30&max=60/);
 
     const prices = await page.getByTestId("product-card").getByTestId("price").allTextContents();
     expect(prices.length).toBeGreaterThan(0);
@@ -81,11 +81,11 @@ test.describe("storefront & catalogue", () => {
   });
 
   test("product page shows details, variant pricing and Product JSON-LD", async ({ page }) => {
-    await page.goto("/products/aura-renewal-serum");
-    await expect(page.getByRole("heading", { level: 1, name: "Aura Renewal Serum" })).toBeVisible();
-    await expect(page.getByText("₦68,000").first()).toBeVisible();
+    await page.goto("/products/velour-renewal-serum");
+    await expect(page.getByRole("heading", { level: 1, name: "Velour Renewal Serum" })).toBeVisible();
+    await expect(page.getByText("$68").first()).toBeVisible();
     await page.getByText("30 ml", { exact: true }).click();
-    await expect(page.getByText("₦109,000").first()).toBeVisible();
+    await expect(page.getByText("$109").first()).toBeVisible();
 
     const jsonLd = (await page.locator('script[type="application/ld+json"]').allTextContents()).join();
     expect(jsonLd).toContain('"@type":"Product"');
@@ -113,7 +113,7 @@ test.describe("storefront & catalogue", () => {
     }
   });
 
-  test("robots.txt and sitemaps cover the whole catalogue", async ({ request }) => {
+  test("robots.txt and sitemaps cover the whole catalog", async ({ request }) => {
     const robots = await (await request.get("/robots.txt")).text();
     expect(robots).toContain("Disallow: /checkout");
     expect(robots).toContain("/products/sitemap/4.xml");

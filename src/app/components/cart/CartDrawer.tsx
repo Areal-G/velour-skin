@@ -140,7 +140,7 @@ export function CartDrawer() {
                     <span className="text-[11px] tracking-[0.22em] text-taupe uppercase">Subtotal</span>
                     <span className="font-serif text-2xl tabular-nums">{formatPrice(totals.subtotalCents)}</span>
                   </div>
-                  <p className="text-xs text-taupe">Delivery calculated at checkout. Prices include 7.5% VAT.</p>
+                  <p className="text-xs text-taupe">Delivery calculated at checkout. All prices in US dollars.</p>
                   <Link
                     href="/checkout"
                     onClick={closeCart}

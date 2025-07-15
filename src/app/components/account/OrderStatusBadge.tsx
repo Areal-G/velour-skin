@@ -7,7 +7,7 @@ const TONES: Record<OrderStatus, string> = {
   paid: "bg-burgundy-50 text-burgundy-700",
   fulfilled: "bg-success/10 text-success",
   failed: "bg-danger/10 text-danger",
-  cancelled: "bg-beige-200 text-taupe",
+  canceled: "bg-beige-200 text-taupe",
   refunded: "bg-beige-200 text-taupe",
 };
 

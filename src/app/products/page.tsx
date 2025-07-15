@@ -13,7 +13,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/products">)
   return buildMetadata({
     title: page > 1 ? `All skincare — page ${page}` : "All skincare",
     description:
-      "Explore the complete Velour Skin collection: serums, moisturisers, cleansers, masks and more, filtered by skin type and concern.",
+      "Explore the complete Velour Skin collection: serums, moisturizers, cleansers, masks and more, filtered by skin type and concern.",
     path: page > 1 ? `/products?page=${page}` : "/products",
   });
 }

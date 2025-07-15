@@ -7,10 +7,10 @@ import { PRODUCTS_TAG } from "@/app/lib/products";
  *
  * Call after editing products in Supabase (e.g. from a database webhook):
  *   curl -X POST -H "Authorization: Bearer $REVALIDATE_SECRET" \
- *        -H "Content-Type: application/json" -d '{"slug":"aura-renewal-serum"}' \
+ *        -H "Content-Type: application/json" -d '{"slug":"velour-renewal-serum"}' \
  *        https://your-site/api/revalidate
  *
- * Omit `slug` to refresh the whole catalogue. Stale pages keep being served
+ * Omit `slug` to refresh the whole catalog. Stale pages keep being served
  * while fresh ones regenerate in the background (stale-while-revalidate).
  */
 export async function POST(request: Request) {

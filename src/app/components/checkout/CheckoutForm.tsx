@@ -44,7 +44,7 @@ export function CheckoutForm({ paymentsEnabled }: CheckoutFormProps) {
         {!paymentsEnabled && (
           <ErrorMessage tone="info" title="Payments are not enabled on this deployment">
             This store is running without a payment provider configured, so orders cannot be placed and
-            no card will be charged. Add Stripe keys (see README) to enable real checkout.
+            no card will be charged. Add Stripe keys to enable real checkout.
           </ErrorMessage>
         )}
         {state.message && (

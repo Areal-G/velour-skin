@@ -24,7 +24,7 @@ export function Newsletter() {
           />
         </div>
         <Reveal className="flex flex-col justify-center px-6 py-14 sm:px-12 lg:px-16">
-          <p className="eyebrow">The Maison letter</p>
+          <p className="eyebrow">The Velour letter</p>
           <h2 id={`${id}-heading`} className="mt-4 font-display text-5xl leading-[1.02] uppercase md:text-6xl">
             Rituals, launches &amp; quiet luxuries
           </h2>

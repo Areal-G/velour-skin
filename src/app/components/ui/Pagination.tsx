@@ -28,7 +28,7 @@ const itemClass =
 
 /**
  * Crawlable, link-based pagination (no JavaScript required). Deep pages are
- * plain links so search engines can reach every product in large catalogues.
+ * plain links so search engines can reach every product in large catalogs.
  */
 export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
   if (totalPages <= 1) return null;

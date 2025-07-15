@@ -45,12 +45,12 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
-  keywords: ["luxury skincare", "serum", "moisturiser", "clean beauty", "Velour Skin"],
+  keywords: ["luxury skincare", "serum", "moisturizer", "clean beauty", "Velour Skin"],
   formatDetection: { telephone: false },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    locale: "en_NG",
+    locale: "en_US",
     description: SITE_DESCRIPTION,
   },
   twitter: { card: "summary_large_image" },
@@ -63,7 +63,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-NG" className={`${wordmark.variable} ${heading.variable} ${body.variable}`}>
+    <html lang="en-US" className={`${wordmark.variable} ${heading.variable} ${body.variable}`}>
       <body className="flex min-h-dvh flex-col antialiased">
         <a
           href="#main"

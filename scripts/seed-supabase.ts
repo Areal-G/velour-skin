@@ -1,5 +1,5 @@
 /**
- * Seeds Supabase with the categories and the 50,000-product demo catalogue.
+ * Seeds Supabase with the categories and the 50,000-product demo catalog.
  *
  *   npm run db:seed
  *
@@ -10,7 +10,7 @@
 import { existsSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 import { CATEGORIES } from "../src/app/data/categories";
-import { CURATED_COUNT, getDemoCatalogue } from "../src/app/data/products";
+import { CURATED_COUNT, getDemoCatalog } from "../src/app/data/products";
 import { popularityScore } from "../src/app/lib/catalog/types";
 
 if (existsSync(".env.local")) process.loadEnvFile(".env.local");
@@ -33,7 +33,7 @@ async function main() {
   if (categoryError) throw categoryError;
   console.log(`✓ ${CATEGORIES.length} categories`);
 
-  const products = getDemoCatalogue();
+  const products = getDemoCatalog();
   for (let start = 0; start < products.length; start += BATCH_SIZE) {
     const rows = products.slice(start, start + BATCH_SIZE).map((p, i) => ({
       id: p.id,
@@ -63,7 +63,7 @@ async function main() {
     if (error) throw error;
     process.stdout.write(`\r✓ ${Math.min(start + BATCH_SIZE, products.length).toLocaleString()} / ${products.length.toLocaleString()} products`);
   }
-  console.log("\nDone. Set CATALOG_SOURCE=supabase to serve the catalogue from the database.");
+  console.log("\nDone. Set CATALOG_SOURCE=supabase to serve the catalog from the database.");
 }
 
 main().catch((error) => {

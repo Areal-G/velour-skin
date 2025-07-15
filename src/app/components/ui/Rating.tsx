@@ -11,7 +11,7 @@ const STAR = "M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7
 
 export function Rating({ value, count, className, size = "sm" }: RatingProps) {
   const pct = Math.max(0, Math.min(100, (value / 5) * 100));
-  const label = `Rated ${value.toFixed(1)} out of 5${count !== undefined ? ` from ${count.toLocaleString("en-NG")} reviews` : ""}`;
+  const label = `Rated ${value.toFixed(1)} out of 5${count !== undefined ? ` from ${count.toLocaleString("en-US")} reviews` : ""}`;
   const starSize = size === "sm" ? "size-3.5" : "size-4.5";
 
   return (
@@ -36,7 +36,7 @@ export function Rating({ value, count, className, size = "sm" }: RatingProps) {
           ))}
         </span>
       </span>
-      {count !== undefined && <span aria-hidden="true">({count.toLocaleString("en-NG")})</span>}
+      {count !== undefined && <span aria-hidden="true">({count.toLocaleString("en-US")})</span>}
     </div>
   );
 }

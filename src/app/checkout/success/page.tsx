@@ -5,7 +5,7 @@ import { ButtonLink } from "@/app/components/ui/Button";
 import { EmptyState } from "@/app/components/ui/EmptyState";
 import { Skeleton } from "@/app/components/ui/Skeleton";
 import { formatPrice } from "@/app/lib/currency";
-import { updateOrderStatusBySession } from "@/app/lib/orders";
+import { updateOrderStatus } from "@/app/lib/orders";
 import { CHECKOUT_SESSION_ID_RE, isPaymentConfigured, retrieveCheckoutSession } from "@/app/lib/payment";
 import { isAdminConfigured } from "@/app/lib/supabase/admin";
 
@@ -55,7 +55,14 @@ async function Confirmation({ searchParams }: Pick<PageProps<"/checkout/success"
   if (session.payment_status === "paid") {
     // Belt and braces alongside the webhook: idempotently mark the order paid.
     if (isAdminConfigured()) {
-      await updateOrderStatusBySession(session.id, "paid", paymentIntentId(session.payment_intent)).catch(
+      await updateOrderStatus(
+        {
+          sessionId: session.id,
+          orderId: session.client_reference_id,
+          paymentIntentId: paymentIntentId(session.payment_intent),
+        },
+        "paid",
+      ).catch(
         (error) => console.error("[checkout/success] order sync failed", error),
       );
     }
@@ -67,7 +74,7 @@ async function Confirmation({ searchParams }: Pick<PageProps<"/checkout/success"
         <p className="eyebrow">Order confirmed</p>
         <h1 className="mt-3 text-5xl">Thank you</h1>
         <p className="mt-4 text-taupe">
-          Your payment of {formatPrice(session.amount_total ?? 0, session.currency ?? "ngn")} was successful.
+          Your payment of {formatPrice(session.amount_total ?? 0, session.currency ?? "usd")} was successful.
           {session.customer_details?.email && <> A confirmation has been sent to {session.customer_details.email}.</>}
         </p>
         <p className="mt-6 bg-beige-100 px-4 py-3 text-sm">

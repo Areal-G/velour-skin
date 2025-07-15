@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getDemoCatalogue } from "@/app/data/products";
+import { getDemoCatalog } from "@/app/data/products";
 import { CATEGORY_BY_SLUG } from "@/app/data/categories";
 import { absoluteUrl, buildMetadata, productJsonLd, serializeJsonLd } from "@/app/lib/seo";
 
@@ -24,13 +24,13 @@ describe("buildMetadata", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://velour-skin.example");
     const meta = buildMetadata({ title: "Serums", description: "d", path: "/categories/serums", noIndex: true });
     expect(meta.alternates?.canonical).toBe("https://velour-skin.example/categories/serums");
-    expect(meta.openGraph).toMatchObject({ url: "https://velour-skin.example/categories/serums", locale: "en_NG" });
+    expect(meta.openGraph).toMatchObject({ url: "https://velour-skin.example/categories/serums", locale: "en_US" });
     expect(meta.robots).toEqual({ index: false, follow: true });
   });
 });
 
 describe("productJsonLd", () => {
-  const product = getDemoCatalogue()[0];
+  const product = getDemoCatalog()[0];
   const json = productJsonLd(product, CATEGORY_BY_SLUG.get(product.categorySlug)!);
 
   it("describes the product with brand, rating and price range", () => {
@@ -43,8 +43,8 @@ describe("productJsonLd", () => {
     });
     const offers = json.offers as Record<string, unknown>;
     expect(offers["@type"]).toBe("AggregateOffer");
-    expect(offers.priceCurrency).toBe("NGN");
-    expect(offers.lowPrice).toBe("68000.00");
+    expect(offers.priceCurrency).toBe("USD");
+    expect(offers.lowPrice).toBe("68.00");
   });
 });
 

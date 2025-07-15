@@ -17,15 +17,15 @@ export function CartView() {
   const [unavailable, setUnavailable] = useState<string[]>([]);
   const [priceChanged, setPriceChanged] = useState(false);
 
-  // Re-price against the live catalogue whenever the bag's contents change.
+  // Re-price against the live catalog whenever the bag's contents change.
   const signature = items.map((i) => `${i.variantId}:${i.quantity}`).join("|");
   useEffect(() => {
     if (!signature) return;
-    let cancelled = false;
+    let canceled = false;
     const lines = items.map(({ productId, variantId, quantity }) => ({ productId, variantId, quantity }));
     validateCart(lines)
       .then((result) => {
-        if (cancelled || !result.ok) return;
+        if (canceled || !result.ok) return;
         setUnavailable(result.unavailable);
         const prices = new Map(result.lines.map((l) => [l.variantId, l.unitPriceCents]));
         const changed = items.some(
@@ -42,9 +42,9 @@ export function CartView() {
         // Non-fatal: prices are re-validated again at checkout.
       });
     return () => {
-      cancelled = true;
+      canceled = true;
     };
-    // `items` is intentionally summarised by `signature` to avoid re-running on price updates.
+    // `items` is intentionally summarized by `signature` to avoid re-running on price updates.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signature]);
 
@@ -87,7 +87,7 @@ export function CartView() {
         </h2>
         {priceChanged && (
           <ErrorMessage tone="info" className="mb-4">
-            Some prices have been updated to reflect our current catalogue.
+            Some prices have been updated to reflect our current catalog.
           </ErrorMessage>
         )}
         <ul className="divide-y divide-beige-200 border-y border-beige-200">

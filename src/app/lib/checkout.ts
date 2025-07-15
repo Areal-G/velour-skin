@@ -28,14 +28,18 @@ export const PAYMENTS_UNAVAILABLE_MESSAGE =
  * Shared checkout pipeline used by both the Server Action (`actions/checkout.ts`)
  * and the JSON API (`api/checkout/route.ts`):
  *
- *   validate input → re-price from catalogue → create pending order →
+ *   validate input → re-price from catalog → create pending order →
  *   create Stripe Checkout Session → return the hosted payment URL.
  */
 export async function beginCheckout(input: {
   items: unknown;
   shipping: unknown;
 }): Promise<BeginCheckoutResult> {
-  if (!isPaymentConfigured()) {
+  // Never take a payment we can't record: without order storage the webhook
+  // has nowhere to mark the order paid, so the customer would be charged for
+  // an order that doesn't exist.
+  if (!isPaymentConfigured() || !isAdminConfigured()) {
+    if (isPaymentConfigured()) console.error("[checkout] Stripe is configured but order storage is not");
     return { ok: false, status: 503, message: PAYMENTS_UNAVAILABLE_MESSAGE };
   }
 
@@ -68,16 +72,14 @@ export async function beginCheckout(input: {
   const user = await getCurrentUser();
 
   try {
-    const orderId = isAdminConfigured()
-      ? await createPendingOrder({
-          userId: user?.id ?? null,
-          email,
-          shipping: address,
-          lines: priced.lines,
-          totals: priced.totals,
-          currency: STORE_CURRENCY,
-        })
-      : null;
+    const orderId = await createPendingOrder({
+      userId: user?.id ?? null,
+      email,
+      shipping: address,
+      lines: priced.lines,
+      totals: priced.totals,
+      currency: STORE_CURRENCY,
+    });
 
     const session = await createCheckoutSession({
       orderId,
@@ -87,7 +89,7 @@ export async function beginCheckout(input: {
       totals: priced.totals,
     });
 
-    if (orderId) await attachCheckoutSession(orderId, session.id);
+    await attachCheckoutSession(orderId, session.id);
     if (!session.url) throw new Error("Stripe did not return a checkout URL");
     return { ok: true, url: session.url };
   } catch (error) {

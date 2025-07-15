@@ -25,7 +25,7 @@ export interface RepricedCart {
 }
 
 /**
- * Re-prices a cart against the catalogue (the source of truth). Client-sent
+ * Re-prices a cart against the catalog (the source of truth). Client-sent
  * prices are ignored entirely; only product/variant IDs and quantities are
  * trusted, and those have already been validated by `cartLinesSchema`.
  */

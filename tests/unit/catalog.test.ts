@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CATEGORIES } from "@/app/data/categories";
-import { CATALOG_SIZE, getDemoCatalogue } from "@/app/data/products";
+import { CATALOG_SIZE, getDemoCatalog } from "@/app/data/products";
 import { demoCatalog } from "@/app/lib/catalog/demo";
 import type { ProductQuery } from "@/app/types/product";
 
@@ -11,8 +11,8 @@ const query = (overrides: Partial<ProductQuery> = {}): ProductQuery => ({
   ...overrides,
 });
 
-describe("demo catalogue", () => {
-  const products = getDemoCatalogue();
+describe("demo catalog", () => {
+  const products = getDemoCatalog();
 
   it(`contains ${CATALOG_SIZE.toLocaleString()} products with unique ids and slugs`, () => {
     expect(products).toHaveLength(CATALOG_SIZE);
@@ -21,7 +21,7 @@ describe("demo catalogue", () => {
   });
 
   it("is deterministic across calls", () => {
-    expect(getDemoCatalogue()[12345]).toEqual(products[12345]);
+    expect(getDemoCatalog()[12345]).toEqual(products[12345]);
   });
 
   it("only uses known categories and valid, URL-safe data", () => {
@@ -38,7 +38,7 @@ describe("demo catalogue", () => {
 });
 
 describe("demoCatalog.listProducts", () => {
-  it("paginates the full catalogue", async () => {
+  it("paginates the full catalog", async () => {
     const page1 = await demoCatalog.listProducts(query());
     const page2 = await demoCatalog.listProducts(query({ page: 2 }));
     expect(page1.total).toBe(CATALOG_SIZE);
@@ -60,8 +60,8 @@ describe("demoCatalog.listProducts", () => {
         category: "serums",
         skinTypes: ["sensitive"],
         concerns: ["redness"],
-        minPrice: 3_000_000,
-        maxPrice: 6_000_000,
+        minPrice: 3_000,
+        maxPrice: 6_000,
         inStock: true,
         pageSize: 100,
       }),
@@ -71,8 +71,8 @@ describe("demoCatalog.listProducts", () => {
       expect(p.categorySlug).toBe("serums");
       expect(p.skinTypes).toContain("sensitive");
       expect(p.concerns).toContain("redness");
-      expect(p.priceCents).toBeGreaterThanOrEqual(3_000_000);
-      expect(p.priceCents).toBeLessThanOrEqual(6_000_000);
+      expect(p.priceCents).toBeGreaterThanOrEqual(3_000);
+      expect(p.priceCents).toBeLessThanOrEqual(6_000);
       expect(p.inStock).toBe(true);
     }
   });
@@ -92,7 +92,7 @@ describe("demoCatalog.listProducts", () => {
 
   it("puts hand-written hero products first in the featured order", async () => {
     const { items } = await demoCatalog.listProducts(query());
-    expect(items[0].slug).toBe("aura-renewal-serum");
+    expect(items[0].slug).toBe("velour-renewal-serum");
   });
 
   it("matches every search term (AND semantics)", async () => {
@@ -123,7 +123,7 @@ describe("demoCatalog lookups", () => {
   });
 
   it("recommends in-stock related products from the same category", async () => {
-    const product = (await demoCatalog.getProductBySlug("aura-renewal-serum"))!;
+    const product = (await demoCatalog.getProductBySlug("velour-renewal-serum"))!;
     const related = await demoCatalog.getRelatedProducts(product, 4);
     expect(related).toHaveLength(4);
     for (const r of related) {

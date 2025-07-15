@@ -9,7 +9,7 @@ describe("order status transitions", () => {
   });
 
   it("never lets a terminal order change state", () => {
-    expect(ALLOWED_TRANSITIONS.cancelled).toEqual([]);
+    expect(ALLOWED_TRANSITIONS.canceled).toEqual([]);
     expect(ALLOWED_TRANSITIONS.refunded).toEqual([]);
   });
 
@@ -25,7 +25,15 @@ describe("statusForEvent (Stripe webhook mapping)", () => {
   it("marks paid sessions as paid", () => {
     expect(
       statusForEvent(sessionEvent("checkout.session.completed", { payment_status: "paid", payment_intent: "pi_1" })),
-    ).toEqual({ sessionId: "cs_test_123", status: "paid", paymentIntentId: "pi_1" });
+    ).toEqual({ sessionId: "cs_test_123", orderId: null, status: "paid", paymentIntentId: "pi_1" });
+  });
+
+  it("carries our order ID so the order can be found if the session was never linked", () => {
+    expect(
+      statusForEvent(
+        sessionEvent("checkout.session.completed", { payment_status: "paid", payment_intent: "pi_1", client_reference_id: "ord-1" }),
+      ),
+    ).toMatchObject({ orderId: "ord-1" });
   });
 
   it("does not mark an order paid before funds have cleared", () => {
@@ -37,7 +45,14 @@ describe("statusForEvent (Stripe webhook mapping)", () => {
       statusForEvent(sessionEvent("checkout.session.async_payment_succeeded", { payment_status: "paid", payment_intent: null })),
     ).toMatchObject({ status: "paid" });
     expect(statusForEvent(sessionEvent("checkout.session.async_payment_failed", {}))).toMatchObject({ status: "failed" });
-    expect(statusForEvent(sessionEvent("checkout.session.expired", {}))).toMatchObject({ status: "cancelled" });
+    expect(statusForEvent(sessionEvent("checkout.session.expired", {}))).toMatchObject({ status: "canceled" });
+  });
+
+  it("marks fully refunded charges as refunded, matched by payment intent", () => {
+    const charge = (refunded: boolean) =>
+      ({ type: "charge.refunded", data: { object: { id: "ch_1", refunded, payment_intent: "pi_1", metadata: {} } } }) as unknown as Stripe.Event;
+    expect(statusForEvent(charge(true))).toEqual({ sessionId: null, orderId: null, status: "refunded", paymentIntentId: "pi_1" });
+    expect(statusForEvent(charge(false))).toBeNull();
   });
 
   it("ignores unrelated events", () => {
