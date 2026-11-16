@@ -58,8 +58,8 @@ test.describe("storefront & catalog", () => {
     expect(prices.length).toBeGreaterThan(0);
     for (const price of prices) {
       const value = priceOf(price);
-      expect(value).toBeGreaterThanOrEqual(30_000);
-      expect(value).toBeLessThanOrEqual(60_000);
+      expect(value).toBeGreaterThanOrEqual(30); // prices are shown in whole dollars
+      expect(value).toBeLessThanOrEqual(60);
     }
   });
 

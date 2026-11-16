@@ -111,7 +111,7 @@ All screenshots come from the running app with the built-in sample catalog and t
 | Styling and motion | Tailwind CSS 4 with design tokens, Motion 14 (`LazyMotion`) | One palette for every component; only Motion's DOM features are loaded |
 | Data and auth | Supabase (Postgres, Auth, Row Level Security) through `@supabase/supabase-js` 2 and `@supabase/ssr` | Customers can only read their own orders, enforced in the database |
 | Payments | Stripe 23 (Checkout + webhooks) | Card data never touches the store |
-| Tests | Vitest 4 and Testing Library, Playwright 1.64 | Unit, component and end-to-end coverage on desktop and mobile |
+| Tests | Vitest 5 and Testing Library, Playwright 1.65 | Unit, component and end-to-end coverage on desktop and mobile |
 | Tooling | ESLint 9, tsx, Supabase CLI, GitHub Actions | `npm run verify` runs what CI runs |
 
 ## Architecture
