@@ -37,10 +37,10 @@ export function isSupabaseConfigured(): boolean {
 /**
  * The storefront reads products from Supabase only when explicitly enabled
  * (after the database has been seeded). Otherwise it serves the deterministic
- * 50,000-product demo catalog from memory.
+ * 50,000-product sample catalog from memory.
  */
-export function getCatalogSource(): "supabase" | "demo" {
+export function getCatalogSource(): "supabase" | "memory" {
   return process.env.CATALOG_SOURCE === "supabase" && isSupabaseConfigured()
     ? "supabase"
-    : "demo";
+    : "memory";
 }

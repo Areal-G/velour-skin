@@ -1,10 +1,10 @@
 /**
- * Demo catalog.
+ * Sample catalog.
  *
  * A small set of hand-written hero products is extended with a deterministic
  * generator so the storefront can be exercised against a realistic catalog
  * of 50,000 products without shipping a 50k-row JSON file. The same generator
- * seeds Supabase (see `scripts/seed-supabase.ts`), so local and database modes
+ * seeds Supabase (see `scripts/seed.ts`), so local and database modes
  * serve identical data.
  *
  * Every value is derived from a seeded PRNG — no `Math.random()` or
@@ -706,8 +706,8 @@ function generateProduct(index: number): Product {
 
 let catalog: Product[] | null = null;
 
-/** Returns the full demo catalog. Built once per server instance (~50 ms). */
-export function getDemoCatalog(): Product[] {
+/** Returns the full sample catalog. Built once per server instance (~50 ms). */
+export function getSampleCatalog(): Product[] {
   if (!catalog) {
     const curated = CURATED.map(curatedToProduct);
     const generated = Array.from({ length: CATALOG_SIZE - curated.length }, (_, i) =>

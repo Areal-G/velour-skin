@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { CATEGORIES, CATEGORY_BY_SLUG } from "@/app/data/categories";
-import { demoCatalog } from "@/app/lib/catalog/demo";
+import { memoryCatalog } from "@/app/lib/catalog/memory";
 import { supabaseCatalog } from "@/app/lib/catalog/supabase";
 import type { CatalogRepository } from "@/app/lib/catalog/types";
 import { getCatalogSource } from "@/app/lib/env";
@@ -20,7 +20,7 @@ import type { ProductQuery } from "@/app/types/product";
 export const PRODUCTS_TAG = "products";
 
 function catalog(): CatalogRepository {
-  return getCatalogSource() === "supabase" ? supabaseCatalog : demoCatalog;
+  return getCatalogSource() === "supabase" ? supabaseCatalog : memoryCatalog;
 }
 
 export async function getProducts(query: ProductQuery) {
