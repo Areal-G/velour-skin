@@ -1,6 +1,5 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
-import { isSupabaseConfigured } from "@/app/lib/env";
 import { createClient } from "@/app/lib/supabase/server";
 import { safeRedirectPath } from "@/app/lib/validations";
 
@@ -12,8 +11,6 @@ export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const next = safeRedirectPath(searchParams.get("next"));
   const failure = new URL("/account/login?error=confirmation", request.url);
-
-  if (!isSupabaseConfigured()) return NextResponse.redirect(failure);
 
   const supabase = await createClient();
   const tokenHash = searchParams.get("token_hash");

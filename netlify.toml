@@ -1,0 +1,8 @@
+# Portfolio demo: in-memory sample data, no database or external services.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_PUBLIC_SITE_URL = "https://velour-skin.arealjagema.com"

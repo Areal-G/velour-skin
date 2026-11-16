@@ -12,8 +12,6 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "db:seed": "tsx scripts/seed-supabase.ts",
-    "db:seed:demo": "tsx scripts/seed-demo-orders.ts",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {

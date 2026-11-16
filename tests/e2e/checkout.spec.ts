@@ -11,33 +11,35 @@ async function addSerumToBag(page: Page, quantity = 1) {
   await expect(page.getByTestId("add-to-cart")).toContainText("Added to bag");
 }
 
-test.describe("bag", () => {
-  test("adds, updates and removes items with correct totals", async ({ page }) => {
-    await addSerumToBag(page);
-    await expect(page.getByTestId("cart-badge")).toHaveAccessibleName("Shopping bag, 1 item");
-
+test.describe("bag (demo)", () => {
+  test("starts with the demo item", async ({ page }) => {
     await page.goto("/cart");
+    await expect(page.getByTestId("cart-badge")).toHaveAccessibleName("Shopping bag, 1 item");
     await expect(page.getByTestId("cart-item")).toHaveCount(1);
-    await expect(page.getByTestId("cart-total")).toHaveText("$73"); // $68 + $5 delivery
+    await expect(page.getByTestId("cart-item")).toContainText("Cashmere Cloud Cream");
+    await expect(page.getByTestId("cart-total")).toHaveText("$63"); // $58 + $5 delivery
+  });
+
+  test("adds, updates and removes items, keeping them across client-side navigation", async ({ page }) => {
+    await addSerumToBag(page);
+    await page.getByRole("dialog").getByRole("link", { name: "View bag" }).click();
+    await expect(page).toHaveURL(/\/cart$/);
+    await expect(page.getByTestId("cart-item")).toHaveCount(2);
+    await expect(page.getByTestId("cart-total")).toHaveText("$126"); // free delivery over $100
 
     await page.getByRole("button", { name: "Increase quantity of Velour Renewal Serum" }).click();
-    await expect(page.getByTestId("cart-total")).toHaveText("$136"); // free delivery over $100
+    await expect(page.getByTestId("cart-total")).toHaveText("$194");
 
     await page.getByRole("button", { name: "Remove Velour Renewal Serum" }).click();
+    await page.getByRole("button", { name: "Remove Cashmere Cloud Cream" }).first().click();
     await expect(page.getByRole("heading", { name: "Your bag is empty" })).toBeVisible();
   });
 
-  test("charges delivery under the free-shipping threshold", async ({ page }) => {
-    await page.goto("/products/velvet-hand-cream");
-    await page.getByTestId("add-to-cart").click();
-    await page.goto("/cart");
-    await expect(page.getByTestId("cart-total")).toHaveText("$27");
-  });
-
-  test("persists across reloads", async ({ page }) => {
+  test("resets to the demo item on reload", async ({ page }) => {
     await addSerumToBag(page, 2);
+    await expect(page.getByTestId("cart-badge")).toHaveAccessibleName("Shopping bag, 3 items");
     await page.reload();
-    await expect(page.getByTestId("cart-badge")).toHaveAccessibleName("Shopping bag, 2 items");
+    await expect(page.getByTestId("cart-badge")).toHaveAccessibleName("Shopping bag, 1 item");
   });
 });
 

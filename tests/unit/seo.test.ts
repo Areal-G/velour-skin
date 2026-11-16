@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getDemoCatalog } from "@/app/data/products";
+import { getSampleCatalog } from "@/app/data/products";
 import { CATEGORY_BY_SLUG } from "@/app/data/categories";
 import { absoluteUrl, buildMetadata, productJsonLd, serializeJsonLd } from "@/app/lib/seo";
 
@@ -30,7 +30,7 @@ describe("buildMetadata", () => {
 });
 
 describe("productJsonLd", () => {
-  const product = getDemoCatalog()[0];
+  const product = getSampleCatalog()[0];
   const json = productJsonLd(product, CATEGORY_BY_SLUG.get(product.categorySlug)!);
 
   it("describes the product with brand, rating and price range", () => {

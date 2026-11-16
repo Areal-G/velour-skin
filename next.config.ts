@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // Demo: every visitor is already the demo customer, so there is nothing to sign in to.
+  async redirects() {
+    return ["/account/login", "/account/register"].map((source) => ({
+      source,
+      destination: "/account",
+      permanent: false,
+    }));
+  },
 };
 
 export default nextConfig;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CATEGORIES } from "@/app/data/categories";
-import { CATALOG_SIZE, getDemoCatalog } from "@/app/data/products";
-import { demoCatalog } from "@/app/lib/catalog/demo";
+import { CATALOG_SIZE, getSampleCatalog } from "@/app/data/products";
+import { memoryCatalog } from "@/app/lib/catalog/memory";
 import type { ProductQuery } from "@/app/types/product";
 
 const query = (overrides: Partial<ProductQuery> = {}): ProductQuery => ({
@@ -11,8 +11,8 @@ const query = (overrides: Partial<ProductQuery> = {}): ProductQuery => ({
   ...overrides,
 });
 
-describe("demo catalog", () => {
-  const products = getDemoCatalog();
+describe("sample catalog", () => {
+  const products = getSampleCatalog();
 
   it(`contains ${CATALOG_SIZE.toLocaleString()} products with unique ids and slugs`, () => {
     expect(products).toHaveLength(CATALOG_SIZE);
@@ -21,7 +21,7 @@ describe("demo catalog", () => {
   });
 
   it("is deterministic across calls", () => {
-    expect(getDemoCatalog()[12345]).toEqual(products[12345]);
+    expect(getSampleCatalog()[12345]).toEqual(products[12345]);
   });
 
   it("only uses known categories and valid, URL-safe data", () => {
@@ -37,10 +37,10 @@ describe("demo catalog", () => {
   });
 });
 
-describe("demoCatalog.listProducts", () => {
+describe("memoryCatalog.listProducts", () => {
   it("paginates the full catalog", async () => {
-    const page1 = await demoCatalog.listProducts(query());
-    const page2 = await demoCatalog.listProducts(query({ page: 2 }));
+    const page1 = await memoryCatalog.listProducts(query());
+    const page2 = await memoryCatalog.listProducts(query({ page: 2 }));
     expect(page1.total).toBe(CATALOG_SIZE);
     expect(page1.totalPages).toBe(Math.ceil(CATALOG_SIZE / 24));
     expect(page1.items).toHaveLength(24);
@@ -50,12 +50,12 @@ describe("demoCatalog.listProducts", () => {
 
   it("returns the last, partial page and an empty page beyond it", async () => {
     const last = Math.ceil(CATALOG_SIZE / 24);
-    expect((await demoCatalog.listProducts(query({ page: last }))).items).toHaveLength(CATALOG_SIZE % 24 || 24);
-    expect((await demoCatalog.listProducts(query({ page: last + 1 }))).items).toHaveLength(0);
+    expect((await memoryCatalog.listProducts(query({ page: last }))).items).toHaveLength(CATALOG_SIZE % 24 || 24);
+    expect((await memoryCatalog.listProducts(query({ page: last + 1 }))).items).toHaveLength(0);
   });
 
   it("filters by category, skin type, concern, price and stock together", async () => {
-    const result = await demoCatalog.listProducts(
+    const result = await memoryCatalog.listProducts(
       query({
         category: "serums",
         skinTypes: ["sensitive"],
@@ -81,50 +81,50 @@ describe("demoCatalog.listProducts", () => {
     ["price-asc", (a: number, b: number) => a <= b],
     ["price-desc", (a: number, b: number) => a >= b],
   ] as const)("sorts by %s", async (sort, inOrder) => {
-    const { items } = await demoCatalog.listProducts(query({ sort, pageSize: 200 }));
+    const { items } = await memoryCatalog.listProducts(query({ sort, pageSize: 200 }));
     for (let i = 1; i < items.length; i++) expect(inOrder(items[i - 1].priceCents, items[i].priceCents)).toBe(true);
   });
 
   it("sorts newest first", async () => {
-    const { items } = await demoCatalog.listProducts(query({ sort: "newest", pageSize: 100 }));
+    const { items } = await memoryCatalog.listProducts(query({ sort: "newest", pageSize: 100 }));
     for (let i = 1; i < items.length; i++) expect(items[i - 1].createdAt >= items[i].createdAt).toBe(true);
   });
 
   it("puts hand-written hero products first in the featured order", async () => {
-    const { items } = await demoCatalog.listProducts(query());
+    const { items } = await memoryCatalog.listProducts(query());
     expect(items[0].slug).toBe("velour-renewal-serum");
   });
 
   it("matches every search term (AND semantics)", async () => {
-    const { items, total } = await demoCatalog.listProducts(query({ q: "vitamin c serum", pageSize: 50 }));
+    const { items, total } = await memoryCatalog.listProducts(query({ q: "vitamin c serum", pageSize: 50 }));
     expect(total).toBeGreaterThan(0);
     for (const p of items) expect(p.name.toLowerCase()).toMatch(/vitamin c/);
   });
 
   it("returns nothing for nonsense queries", async () => {
-    expect((await demoCatalog.listProducts(query({ q: "zzzqqqxxx" }))).total).toBe(0);
+    expect((await memoryCatalog.listProducts(query({ q: "zzzqqqxxx" }))).total).toBe(0);
   });
 
   it("filters 50,000 products quickly once indexes are warm", async () => {
-    await demoCatalog.listProducts(query({ sort: "rating" }));
+    await memoryCatalog.listProducts(query({ sort: "rating" }));
     const start = performance.now();
-    await demoCatalog.listProducts(query({ sort: "rating", concerns: ["hydration"], page: 300 }));
+    await memoryCatalog.listProducts(query({ sort: "rating", concerns: ["hydration"], page: 300 }));
     expect(performance.now() - start).toBeLessThan(200);
   });
 });
 
-describe("demoCatalog lookups", () => {
+describe("memoryCatalog lookups", () => {
   it("finds products by slug and id", async () => {
-    const product = await demoCatalog.getProductBySlug("cashmere-cloud-cream");
+    const product = await memoryCatalog.getProductBySlug("cashmere-cloud-cream");
     expect(product?.name).toBe("Cashmere Cloud Cream");
-    const [byId] = await demoCatalog.getProductsByIds([product!.id, "does-not-exist"]);
+    const [byId] = await memoryCatalog.getProductsByIds([product!.id, "does-not-exist"]);
     expect(byId.slug).toBe("cashmere-cloud-cream");
-    expect(await demoCatalog.getProductBySlug("nope")).toBeNull();
+    expect(await memoryCatalog.getProductBySlug("nope")).toBeNull();
   });
 
   it("recommends in-stock related products from the same category", async () => {
-    const product = (await demoCatalog.getProductBySlug("velour-renewal-serum"))!;
-    const related = await demoCatalog.getRelatedProducts(product, 4);
+    const product = (await memoryCatalog.getProductBySlug("velour-renewal-serum"))!;
+    const related = await memoryCatalog.getRelatedProducts(product, 4);
     expect(related).toHaveLength(4);
     for (const r of related) {
       expect(r.id).not.toBe(product.id);
@@ -134,8 +134,8 @@ describe("demoCatalog lookups", () => {
   });
 
   it("pages through sitemap entries", async () => {
-    const entries = await demoCatalog.listSitemapProducts(49_990, 100);
+    const entries = await memoryCatalog.listSitemapProducts(49_990, 100);
     expect(entries).toHaveLength(10);
-    expect(await demoCatalog.countProducts()).toBe(CATALOG_SIZE);
+    expect(await memoryCatalog.countProducts()).toBe(CATALOG_SIZE);
   });
 });

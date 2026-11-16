@@ -1,5 +1,5 @@
 import { CATEGORY_BY_SLUG } from "@/app/data/categories";
-import { CURATED_COUNT, getDemoCatalog } from "@/app/data/products";
+import { CURATED_COUNT, getSampleCatalog } from "@/app/data/products";
 import type { Product, ProductQuery, SortOption } from "@/app/types/product";
 import {
   paginate,
@@ -27,7 +27,7 @@ let indexes: Indexes | null = null;
 
 function getIndexes(): Indexes {
   if (indexes) return indexes;
-  const products = getDemoCatalog();
+  const products = getSampleCatalog();
   indexes = {
     products,
     bySlug: new Map(products.map((p) => [p.slug, p])),
@@ -98,7 +98,7 @@ export function buildPredicate(query: ProductQuery) {
   };
 }
 
-export const demoCatalog: CatalogRepository = {
+export const memoryCatalog: CatalogRepository = {
   async listProducts(query) {
     const { products } = getIndexes();
     const order = sortedOrder(query.sort);

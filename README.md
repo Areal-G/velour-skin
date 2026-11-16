@@ -10,11 +10,14 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-Postgres_+_RLS-3ECF8E?logo=supabase&logoColor=white)
 ![Stripe](https://img.shields.io/badge/Stripe-Checkout-635BFF?logo=stripe&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-104_unit_+_Playwright-5c1a2b)
+![Tests](https://img.shields.io/badge/tests-114_unit_+_Playwright-5c1a2b)
 
-[Features](#features) · [Design](#design) · [Screenshots](#screenshots) · [Tech stack](#tech-stack) · [Getting started](#getting-started)
+[Live demo](https://velour-skin.arealjagema.com) · [Features](#features) · [Design](#design) · [Screenshots](#screenshots) · [Tech stack](#tech-stack) · [Getting started](#getting-started)
 
 </div>
+
+> [!NOTE]
+> **This is the `demo` branch**, the portfolio build behind the [live demo](https://velour-skin.arealjagema.com). It runs on Netlify with no database or external services: the 50,000-product catalog, the demo customer and their orders live in memory, served through a small stand-in for the Supabase client (`src/app/lib/demo/`). Every visitor is signed in as the demo customer, Adaeze, and the bag starts with one item: changes last until the page is reloaded or the tab is closed. Creating accounts, signing out and checkout are disabled. The full app, with Supabase, Stripe and `npm run seed`, lives on [`main`](https://github.com/Areal-G/velour-skin/tree/main); the setup sections below describe it.
 
 <br>
 
@@ -25,18 +28,6 @@
 Velour Skin is a production-style e-commerce front end for a premium skincare brand selling in the US. It covers the whole path a shopper takes: browsing and filtering a large catalog, product pages with size variants, a slide-over bag, a validated checkout that hands off to Stripe, and an account area with order history.
 
 It is built to stay fast at scale. Pages depend on a catalog repository interface that works against a deterministic in-memory catalog or against Postgres, data is cached with Next.js Cache Components and tag revalidation, and every integration is optional, so the store runs with zero configuration.
-
-## Try the demo
-
-With no environment variables at all, `npm run dev` gives you the full catalog, search, filters, product pages, the bag and working customer accounts (stored locally). Checkout shows a clear "payments are not enabled" notice instead of pretending to take money.
-
-For the full demo with order history, run Supabase locally (see [Getting started](#getting-started)), set `DEMO_EMAIL` and `DEMO_PASSWORD` in `.env.local`, then:
-
-```bash
-npm run db:seed:demo
-```
-
-This creates that customer if needed and gives them six orders from the last three months (confirmed, dispatched, refunded and canceled). Sign in at `/account/login` and open **Orders**.
 
 
 ## Features
@@ -112,7 +103,7 @@ Customers sign in and see every order with its status, then open an order for it
 | --- | --- |
 | <img src="readme/categories.png" width="440" alt="Shop by category bento grid"><br>**Shop by category.** A bento grid of the eight categories. | <img src="readme/search.png" width="440" alt="Search results for cream"><br>**Search.** Full-catalog search with the same filters and sorting. |
 
-All screenshots come from the running app with the built-in demo catalog and the seeded demo customer: desktop at 1440×900 and mobile at 390×844, both at retina resolution. The store ships a light theme only.
+All screenshots come from the running app with the built-in sample catalog and the sample customer from `npm run seed`: desktop at 1440×900 and mobile at 390×844, both at retina resolution. The store ships a light theme only.
 
 ## Tech stack
 
@@ -144,7 +135,7 @@ flowchart LR
     AUTH{{"Auth facade"}}
   end
 
-  DEMO[("Demo catalog<br/>50,000 products, in memory")]
+  MEMORY[("Sample catalog<br/>50,000 products, in memory")]
   SB[("Supabase<br/>products · orders · auth (RLS)")]
   LOCAL[(".data/users.json<br/>built-in auth")]
   STRIPE["Stripe Checkout"]
@@ -153,7 +144,7 @@ flowchart LR
   UI --> ACT
   UI <--> CART
   RSC --> REPO
-  REPO --> DEMO
+  REPO --> MEMORY
   REPO --> SB
   ACT --> AUTH
   AUTH --> LOCAL
@@ -166,7 +157,7 @@ flowchart LR
 
 **Key decisions**
 
-- **A catalog that scales.** Pages only talk to a `CatalogRepository`. The demo implementation pre-computes one sorted index per sort order, so filtering a page is a single linear pass over 50,000 rows. The Supabase implementation uses composite indexes per sort order, GIN indexes for array facets and a generated `tsvector` column for search. Deep page offsets are capped to protect the database.
+- **A catalog that scales.** Pages only talk to a `CatalogRepository`. The in-memory implementation pre-computes one sorted index per sort order, so filtering a page is a single linear pass over 50,000 rows. The Supabase implementation uses composite indexes per sort order, GIN indexes for array facets and a generated `tsvector` column for search. Deep page offsets are capped to protect the database.
 - **Caching with Cache Components.** Catalog queries run inside `"use cache"` with `cacheLife("hours")` and `products` / `product:<slug>` tags. Popular products and category shells are prerendered at build time; the rest render on first request and are then cached. `POST /api/revalidate` (bearer secret) refreshes one product or the whole catalog, for example from a database webhook. Request-specific UI streams behind `<Suspense>`, so the static shell comes from the CDN.
 - **Payments the server controls.** The server validates the bag with zod, re-prices it from the catalog, stores a `pending` order and redirects to Stripe. An order becomes `paid` only when Stripe confirms it, through the signed webhook or a server-side session lookup on the success page. Both paths go through one state machine (`lib/order-status.ts`), so retries and reloads are safe. Full refunds move the order to `refunded`. Checkout refuses to start if orders cannot be stored, so a card is never charged without a record.
 - **Auth that works with or without a backend.** One facade (`lib/auth.ts`) hides two providers. Supabase sessions are verified with `getClaims()` rather than trusted from the cookie. Row Level Security is the boundary: the catalog is read-only to the public and customers can only read their own orders. Server-only modules import `server-only`, so secret keys never reach a client bundle. Redirect targets are restricted to same-origin paths.
@@ -177,7 +168,7 @@ flowchart LR
 
 - **One checkout pipeline.** The Server Action and the JSON API both call `beginCheckout`, which refuses to start without order storage, validates the bag and address with zod, re-prices every line from the catalog and only then creates the Stripe session.
 - **An order state machine.** Allowed transitions live in one table, and every status update is conditional on the order's current state, so webhook retries and success-page reloads can't move an order backwards.
-- **Scale built into the catalog.** The demo repository pre-computes one sorted index per sort order; the Supabase repository uses matching composite indexes, GIN indexes for facets and a generated `tsvector` column for search.
+- **Scale built into the catalog.** The in-memory repository pre-computes one sorted index per sort order; the Supabase repository uses matching composite indexes, GIN indexes for facets and a generated `tsvector` column for search.
 - **Server-only secrets.** Modules that hold keys import `server-only`, Supabase sessions are verified with `getClaims()`, and redirect targets are restricted to same-origin paths.
 
 ```ts
@@ -254,13 +245,13 @@ npx supabase start
 
 The repo includes `supabase/config.toml` (API on port 55321, Studio on 55323) and the schema migration, which is applied on start. Copy the printed API URL, publishable key and secret key into `.env.local`. For a hosted project, run the migration in `supabase/migrations/` and set the same three variables. In Supabase Auth, add `<site-url>/auth/confirm` as a redirect URL.
 
-Optionally serve the catalog from Postgres instead of memory:
+Fill the database with sample data:
 
 ```bash
-npm run db:seed
+npm run seed
 ```
 
-This upserts 8 categories and 50,000 products in batches. Then set `CATALOG_SOURCE=supabase`.
+This upserts 8 categories and 50,000 products in batches, then creates a sample customer with six orders from the last three months (confirmed, dispatched, refunded and canceled). Against a local Supabase the customer signs in as `customer@example.com` / `velour-skin-local`; for a hosted project, set `SEED_OWNER_EMAIL` and `SEED_OWNER_PASSWORD` first. Sign in at `/account/login` and open **Orders**. Set `CATALOG_SOURCE=supabase` to serve the catalog from Postgres instead of memory.
 
 **Add Stripe (payments)**
 
@@ -278,14 +269,15 @@ Set `STRIPE_SECRET_KEY` to a test key and `STRIPE_WEBHOOK_SECRET` to the printed
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | For production | Public base URL for canonical links, sitemaps and Stripe redirects. Falls back to the Vercel URL. |
 | `AUTH_SECRET` | For shared environments | Signs built-in auth session cookies. Generated automatically in `.data/` locally. |
+| `AUTH_DATA_DIR` | No | Where the built-in auth provider stores users. Defaults to `.data/` (`/tmp/velour-skin` on Vercel). |
 | `NEXT_PUBLIC_SUPABASE_URL` | For accounts and orders | Supabase project URL. |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | For accounts and orders | Publishable (anon) key. Safe in the browser; RLS protects every table. |
 | `SUPABASE_SECRET_KEY` | For orders | Server-only key for order writes and webhooks. Never expose it. |
-| `CATALOG_SOURCE` | No | `demo` (default) or `supabase`. |
+| `CATALOG_SOURCE` | No | `memory` (default) or `supabase`. |
 | `STRIPE_SECRET_KEY` | For payments | Stripe secret key (`sk_test_...` in development). |
 | `STRIPE_WEBHOOK_SECRET` | For payments | Signing secret for `/api/webhooks/payment`. |
 | `REVALIDATE_SECRET` | For revalidation | Bearer token for `POST /api/revalidate`. |
-| `DEMO_EMAIL`, `DEMO_PASSWORD` | For the demo seed | Customer that `npm run db:seed:demo` creates and fills with orders. Local Supabase only. |
+| `SEED_OWNER_EMAIL`, `SEED_OWNER_PASSWORD` | For `npm run seed` on a hosted project | Sign-in of the sample customer the seed creates with six orders. Default to `customer@example.com` / `velour-skin-local` against a local Supabase. |
 
 </details>
 
@@ -301,8 +293,7 @@ Set `STRIPE_SECRET_KEY` to a test key and `STRIPE_WEBHOOK_SECRET` to the printed
 | `npm test` | Unit and component tests. |
 | `npm run test:coverage` | Unit tests with V8 coverage. |
 | `npm run test:e2e` | Playwright tests (builds and starts the app). |
-| `npm run db:seed` | Seed Supabase with the 50,000-product catalog. |
-| `npm run db:seed:demo` | Create the demo customer and six sample orders (localhost only). |
+| `npm run seed` | Seed Supabase with the 50,000-product catalog and a sample customer with six orders. |
 | `npm run verify` | Lint, typecheck, test and build: what CI runs. |
 
 </details>
@@ -323,9 +314,9 @@ src/
     api/                 checkout, webhooks/payment, revalidate
     actions/             server actions: cart, checkout, auth, newsletter
     components/          layout, home, products, cart, checkout, account, motion, ui
-    data/                categories, photography map, deterministic catalog generator
+    data/                categories, photography map, catalog generator, sample orders
     lib/
-      catalog/           CatalogRepository with demo and Supabase implementations
+      catalog/           CatalogRepository with in-memory and Supabase implementations
       supabase/          browser, server and admin clients
       auth.ts local-auth.ts        auth facade and built-in provider
       checkout.ts payment.ts orders.ts order-status.ts   checkout pipeline and order lifecycle
@@ -333,7 +324,7 @@ src/
     cart-store.ts        pure cart reducer and external store
     sitemap.ts robots.ts manifest.ts opengraph-image.tsx
 supabase/                local config and SQL migration (schema, indexes, RLS)
-scripts/                 catalog seeder and demo-order seeder
+scripts/                 sample-data seeder (`npm run seed`)
 tests/unit/ tests/e2e/   Vitest and Playwright suites
 ```
 
@@ -348,7 +339,7 @@ npm run lint
 npm run test:e2e
 ```
 
-- **Unit and component (104 tests):** auth, cart reducer, catalog filtering and sorting at scale, currency formatting, orders, query parsing, SEO helpers, validation and key components.
+- **Unit and component (114 tests):** the in-memory Supabase stand-in, the demo bag, cart reducer, catalog filtering and sorting at scale, currency formatting, orders, query parsing, SEO helpers, validation and key components.
 - **End-to-end:** products, auth and checkout flows on desktop and mobile. Run against an existing server with `PLAYWRIGHT_BASE_URL=http://localhost:3000 npm run test:e2e`; set `E2E_STRIPE_ENABLED=1` against a server with Stripe test keys to include the redirect tests.
 - **CI** (`.github/workflows/ci.yml`) runs lint, typecheck, unit tests with coverage and a build, then the Playwright suite in a second job.
 

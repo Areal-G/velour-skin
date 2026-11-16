@@ -1,10 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { CATEGORIES, CATEGORY_BY_SLUG } from "@/app/data/categories";
-import { demoCatalog } from "@/app/lib/catalog/demo";
-import { supabaseCatalog } from "@/app/lib/catalog/supabase";
-import type { CatalogRepository } from "@/app/lib/catalog/types";
-import { getCatalogSource } from "@/app/lib/env";
+import { memoryCatalog } from "@/app/lib/catalog/memory";
 import type { Category } from "@/app/types/category";
 import type { ProductQuery } from "@/app/types/product";
 
@@ -19,36 +16,32 @@ import type { ProductQuery } from "@/app/types/product";
 
 export const PRODUCTS_TAG = "products";
 
-function catalog(): CatalogRepository {
-  return getCatalogSource() === "supabase" ? supabaseCatalog : demoCatalog;
-}
-
 export async function getProducts(query: ProductQuery) {
   "use cache";
   cacheLife("hours");
   cacheTag(PRODUCTS_TAG);
-  return catalog().listProducts(query);
+  return memoryCatalog.listProducts(query);
 }
 
 export async function getProductBySlug(slug: string) {
   "use cache";
   cacheLife("hours");
   cacheTag(PRODUCTS_TAG, `product:${slug}`);
-  return catalog().getProductBySlug(slug);
+  return memoryCatalog.getProductBySlug(slug);
 }
 
 export async function getFeaturedProducts(limit = 8) {
   "use cache";
   cacheLife("hours");
   cacheTag(PRODUCTS_TAG);
-  return catalog().getFeaturedProducts(limit);
+  return memoryCatalog.getFeaturedProducts(limit);
 }
 
 export async function getNewArrivals(limit = 8) {
   "use cache";
   cacheLife("hours");
   cacheTag(PRODUCTS_TAG);
-  const result = await catalog().listProducts({ sort: "newest", page: 1, pageSize: limit, inStock: true });
+  const result = await memoryCatalog.listProducts({ sort: "newest", page: 1, pageSize: limit, inStock: true });
   return result.items;
 }
 
@@ -56,8 +49,8 @@ export async function getRelatedProducts(slug: string, limit = 4) {
   "use cache";
   cacheLife("hours");
   cacheTag(PRODUCTS_TAG);
-  const product = await catalog().getProductBySlug(slug);
-  return product ? catalog().getRelatedProducts(product, limit) : [];
+  const product = await memoryCatalog.getProductBySlug(slug);
+  return product ? memoryCatalog.getRelatedProducts(product, limit) : [];
 }
 
 /** Slugs of the most popular products, prerendered at build time. */
@@ -65,7 +58,7 @@ export async function getPopularProductSlugs(limit: number) {
   "use cache";
   cacheLife("days");
   cacheTag(PRODUCTS_TAG);
-  const products = await catalog().getFeaturedProducts(limit);
+  const products = await memoryCatalog.getFeaturedProducts(limit);
   return products.map((p) => p.slug);
 }
 
@@ -73,14 +66,14 @@ export async function countProducts() {
   "use cache";
   cacheLife("days");
   cacheTag(PRODUCTS_TAG);
-  return catalog().countProducts();
+  return memoryCatalog.countProducts();
 }
 
 export async function getSitemapProducts(offset: number, limit: number) {
   "use cache";
   cacheLife("days");
   cacheTag(PRODUCTS_TAG);
-  return catalog().listSitemapProducts(offset, limit);
+  return memoryCatalog.listSitemapProducts(offset, limit);
 }
 
 /**
@@ -88,7 +81,7 @@ export async function getSitemapProducts(offset: number, limit: number) {
  * truth at the moment of payment, never from a cache or from the client.
  */
 export function getProductsForCheckout(ids: string[]) {
-  return catalog().getProductsByIds(ids);
+  return memoryCatalog.getProductsByIds(ids);
 }
 
 export async function getCategories(): Promise<Category[]> {

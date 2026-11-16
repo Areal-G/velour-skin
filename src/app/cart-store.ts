@@ -7,7 +7,8 @@ import type { CartItem, CartState } from "@/app/types/cart";
  * - `cartReducer` is a pure function (fully unit-tested).
  * - `createCartStore` wraps it in a tiny external store compatible with
  *   React's `useSyncExternalStore`, persisting to `localStorage` and syncing
- *   across browser tabs via the `storage` event.
+ *   across browser tabs via the `storage` event. Without storage it keeps the
+ *   bag in memory, starting from `initial`.
  */
 
 export const CART_STORAGE_KEY = "velour-skin:cart:v1";
@@ -101,15 +102,17 @@ export interface CartStore {
 
 export function createCartStore(
   storage: Pick<Storage, "getItem" | "setItem" | "removeItem"> | null = safeLocalStorage(),
+  initial: CartState = EMPTY_CART,
 ): CartStore {
   let state: CartState | null = null;
   const listeners = new Set<() => void>();
 
   const read = () => {
     try {
-      return parseStoredCart(storage?.getItem(CART_STORAGE_KEY) ?? null);
+      const raw = storage?.getItem(CART_STORAGE_KEY) ?? null;
+      return raw === null ? initial : parseStoredCart(raw);
     } catch {
-      return EMPTY_CART;
+      return initial;
     }
   };
 
@@ -129,7 +132,7 @@ export function createCartStore(
   return {
     getSnapshot,
     getServerSnapshot() {
-      return EMPTY_CART;
+      return initial;
     },
     subscribe(listener) {
       listeners.add(listener);

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { signOut } from "@/app/actions/auth";
 import { OrderList } from "@/app/components/account/OrderList";
-import { Button, ButtonLink } from "@/app/components/ui/Button";
+import { ButtonLink } from "@/app/components/ui/Button";
 import { EmptyState } from "@/app/components/ui/EmptyState";
 import { Skeleton } from "@/app/components/ui/Skeleton";
 import { requireUser } from "@/app/lib/auth";
@@ -36,11 +35,6 @@ async function AccountOverview() {
           <h1 className="mt-2 text-5xl">Welcome{user.fullName ? `, ${user.fullName.split(" ")[0]}` : ""}</h1>
           <p className="mt-2 text-taupe">{user.email}</p>
         </div>
-        <form action={signOut}>
-          <Button type="submit" variant="outline">
-            Sign out
-          </Button>
-        </form>
       </header>
 
       <section aria-labelledby="recent-orders" className="mt-14">

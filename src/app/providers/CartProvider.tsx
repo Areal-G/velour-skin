@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { createCartStore, type CartStore } from "@/app/cart-store";
+import { DEMO_CART } from "@/app/lib/demo/cart";
 import { calculateTotals } from "@/app/lib/pricing";
 import type { CartItem, CartTotals } from "@/app/types/cart";
 
@@ -29,7 +30,9 @@ export interface CartContextValue {
 export const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [store] = useState<CartStore>(() => createCartStore());
+  // Demo: the bag lives in memory only, so every page load starts again from
+  // the demo's one item while client-side navigation keeps the visitor's changes.
+  const [store] = useState<CartStore>(() => createCartStore(null, DEMO_CART));
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   const [isOpen, setIsOpen] = useState(false);
 
